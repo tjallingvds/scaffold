@@ -64,6 +64,7 @@ function findStep(plan: AssignmentPlan, phase: AssignmentStep["phase"]): Assignm
 
 interface Saved {
   step: Step;
+  groupLabel: string;
   known: string;
   confused: string;
   tried: string;
@@ -104,6 +105,10 @@ export function StudentWorkspace({
 
   const [step, setStep] = useState<Step>(saved.step ?? "welcome");
 
+  // Optional group/pair label (e.g. "Alex + Sam" or "Group 3"). Lets the
+  // teacher tell submissions apart when students share one device.
+  const [groupLabel, setGroupLabel] = useState(saved.groupLabel ?? "");
+
   // Phase 1
   const [known, setKnown] = useState(saved.known ?? "");
   const [confused, setConfused] = useState(saved.confused ?? "");
@@ -133,6 +138,7 @@ export function StudentWorkspace({
         storageKey(shareId),
         JSON.stringify({
           step,
+          groupLabel,
           known,
           confused,
           tried,
@@ -149,6 +155,7 @@ export function StudentWorkspace({
   }, [
     shareId,
     step,
+    groupLabel,
     known,
     confused,
     tried,
@@ -222,15 +229,19 @@ export function StudentWorkspace({
     setPendingMessage("");
 
     // Build the system prompt on every turn so the tutor always sees:
-    // (a) the base Socratic rules, (b) any accessibility adaptation, and
-    // (c) the CURRENT draft (not a stale one from when chat began).
+    // (a) the base Socratic rules, (b) any accessibility adaptation,
+    // (c) the CURRENT draft (not a stale one from when chat began),
+    // (d) whether the student is working solo or in a pair/group.
     const base = plan.student_system_prompt;
     const adaptation = a11y.profile ? TUTOR_ADAPTATIONS[a11y.profile] : "";
     const currentDraft = draft.trim();
     const draftSection = currentDraft
-      ? `CURRENT STUDENT DRAFT (may have been edited since your last reply — always refer to THIS version, not what was in an earlier message):\n"""\n${currentDraft}\n"""`
+      ? `CURRENT STUDENT DRAFT (may have been edited since your last reply. Always refer to THIS version, not what was in an earlier message):\n"""\n${currentDraft}\n"""`
       : `The student has not written a draft yet. Your job right now is to nudge them to write something of their own, even a rough sentence, rather than asking you for ideas first.`;
-    const systemWithContext = [base, adaptation, draftSection]
+    const groupSection = groupLabel.trim()
+      ? `CONTEXT: This is not a solo student. They are working in a pair or small group, labeled "${groupLabel.trim()}". Address them as "you two" or "your group" rather than "you". Encourage them to say who is thinking what when they answer, and to disagree with each other out loud.`
+      : "";
+    const systemWithContext = [base, adaptation, draftSection, groupSection]
       .filter(Boolean)
       .join("\n\n");
 
@@ -309,6 +320,7 @@ export function StudentWorkspace({
             <div className="min-w-0">
               <div className="text-[10px] uppercase tracking-[0.14em] text-chrome-muted font-semibold">
                 Assignment · Grade {plan.grade_level} · ~{plan.time_minutes} min
+                {groupLabel.trim() && ` · ${groupLabel.trim()}`}
               </div>
               <h1 className="text-sm md:text-base font-semibold tracking-tight text-chrome-ink leading-tight truncate">
                 {plan.title}
@@ -336,7 +348,12 @@ export function StudentWorkspace({
         <main className="min-w-0">
           <div key={step} className="animate-[fadeIn_.25s_ease-out]">
             {step === "welcome" && (
-              <Welcome plan={plan} onStart={() => setStep("phase1")} />
+              <Welcome
+                plan={plan}
+                groupLabel={groupLabel}
+                setGroupLabel={setGroupLabel}
+                onStart={() => setStep("phase1")}
+              />
             )}
 
             {step === "phase1" && (
@@ -397,6 +414,7 @@ export function StudentWorkspace({
                 plan={plan}
                 shareId={shareId}
                 profile={a11y.profile}
+                groupLabel={groupLabel}
                 known={known}
                 confused={confused}
                 tried={tried}
@@ -523,7 +541,17 @@ function MiniProgress({ step }: { step: Step }) {
 
 // ---------- Welcome ----------
 
-function Welcome({ plan, onStart }: { plan: AssignmentPlan; onStart: () => void }) {
+function Welcome({
+  plan,
+  groupLabel,
+  setGroupLabel,
+  onStart,
+}: {
+  plan: AssignmentPlan;
+  groupLabel: string;
+  setGroupLabel: (v: string) => void;
+  onStart: () => void;
+}) {
   const p1 = findStep(plan, "pre_engagement");
   const p2 = findStep(plan, "guided_engagement");
   const p3 = findStep(plan, "reflective_engagement");
@@ -590,6 +618,25 @@ function Welcome({ plan, onStart }: { plan: AssignmentPlan; onStart: () => void 
           </li>
         ))}
       </ol>
+
+      <div className="rounded-xl border border-border bg-surface p-4 flex flex-col gap-2">
+        <label className="text-sm font-medium text-foreground">
+          Working with a partner or small group?
+        </label>
+        <p className="text-xs text-muted leading-relaxed">
+          Optional. Enter a label so your teacher can tell your submission
+          apart. Example: <em>Alex + Sam</em> or <em>Group 3</em>. Leave blank
+          if you&rsquo;re working solo.
+        </p>
+        <input
+          type="text"
+          value={groupLabel}
+          onChange={(e) => setGroupLabel(e.target.value)}
+          placeholder="Your names or a group label"
+          maxLength={80}
+          className="bg-surface border border-border rounded-md px-3 py-2 text-sm outline-none focus:border-foreground transition-colors"
+        />
+      </div>
 
       <button
         onClick={onStart}
@@ -1171,6 +1218,7 @@ function SubmitView({
   plan,
   shareId,
   profile,
+  groupLabel,
   known,
   confused,
   tried,
@@ -1186,6 +1234,7 @@ function SubmitView({
   plan: AssignmentPlan;
   shareId: string;
   profile: string | null;
+  groupLabel: string;
   known: string;
   confused: string;
   tried: string;
@@ -1228,6 +1277,7 @@ function SubmitView({
               uncertain: reflection3,
             },
             accessibility_profile: profile,
+            group_label: groupLabel.trim() || null,
           },
         }),
       });

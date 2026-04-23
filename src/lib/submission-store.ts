@@ -14,6 +14,8 @@ export interface StudentSubmissionBlob {
     uncertain: string;
   };
   accessibility_profile?: string | null;
+  // Optional pair/group label. Filled if the student chose to work together.
+  group_label?: string | null;
 }
 
 export interface StoredSubmission {

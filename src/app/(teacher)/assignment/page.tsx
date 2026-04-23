@@ -10,6 +10,7 @@ import { StepsRail, type StepItem } from "../_components/StepsRail";
 import { RecentList, useLibrary } from "../_components/Library";
 import { RevisePrompt } from "../_components/RevisePrompt";
 import { Help } from "../../_shared/Help";
+import { QRCodeSVG } from "qrcode.react";
 import { ASSIGNMENT_TEMPLATES } from "@/lib/templates/assignments";
 import { ASSIGNMENT_EXAMPLES } from "@/lib/templates/assignment-examples";
 import type { AssignmentPlan, AssignmentRequest, AssignmentTemplate } from "@/lib/types";
@@ -574,49 +575,78 @@ function ShareCard({
           Link ready
         </div>
       </div>
-      <div className="flex items-center gap-2 bg-surface border border-border rounded-xl px-3 py-2.5">
-        <a
-          href={url}
-          target="_blank"
-          rel="noreferrer"
-          className="flex-1 text-sm text-foreground font-mono truncate hover:underline"
-        >
-          {url}
-        </a>
-        <button
-          type="button"
-          onClick={async () => {
-            await navigator.clipboard.writeText(url);
-            setCopied(true);
-            setTimeout(() => setCopied(false), 1500);
-          }}
-          className="rounded-full bg-foreground text-surface px-3 py-1.5 text-xs font-medium hover:opacity-90 whitespace-nowrap"
-        >
-          {copied ? "✓ Copied" : "Copy"}
-        </button>
-      </div>
-      <div className="mt-3 text-xs flex flex-wrap items-center gap-x-3 gap-y-1">
-        <a
-          href={url}
-          target="_blank"
-          rel="noreferrer"
-          className="text-foreground font-medium hover:underline"
-        >
-          Preview as a student ↗
-        </a>
-        {shareId && (
-          <a
-            href={`/submissions/${shareId}`}
-            target="_blank"
-            rel="noreferrer"
-            className="text-foreground font-medium hover:underline"
-          >
-            View submissions ↗
-          </a>
-        )}
-        <span className="text-muted">
-          See what your class will see, or the work they&rsquo;ve sent back.
-        </span>
+      <div className="flex items-start gap-4">
+        <div className="flex-1 min-w-0 flex flex-col gap-3">
+          <div className="flex items-center gap-2 bg-surface border border-border rounded-xl px-3 py-2.5">
+            <a
+              href={url}
+              target="_blank"
+              rel="noreferrer"
+              className="flex-1 text-sm text-foreground font-mono truncate hover:underline"
+            >
+              {url}
+            </a>
+            <button
+              type="button"
+              onClick={async () => {
+                await navigator.clipboard.writeText(url);
+                setCopied(true);
+                setTimeout(() => setCopied(false), 1500);
+              }}
+              className="rounded-full bg-foreground text-surface px-3 py-1.5 text-xs font-medium hover:opacity-90 whitespace-nowrap"
+            >
+              {copied ? "✓ Copied" : "Copy"}
+            </button>
+          </div>
+          <div className="text-xs flex flex-wrap items-center gap-x-3 gap-y-1">
+            <a
+              href={url}
+              target="_blank"
+              rel="noreferrer"
+              className="text-foreground font-medium hover:underline"
+            >
+              Preview as a student ↗
+            </a>
+            {shareId && (
+              <a
+                href={`/submissions/${shareId}`}
+                target="_blank"
+                rel="noreferrer"
+                className="text-foreground font-medium hover:underline"
+              >
+                View submissions ↗
+              </a>
+            )}
+            {shareId && (
+              <a
+                href={`/handout/${shareId}`}
+                target="_blank"
+                rel="noreferrer"
+                className="text-foreground font-medium hover:underline"
+              >
+                Printable handout ↗
+              </a>
+            )}
+          </div>
+          <p className="text-xs text-muted leading-relaxed">
+            Project the QR code on a screen or print the handout. Students scan
+            or tap to open the assignment. No account needed.
+          </p>
+        </div>
+
+        {/* QR code. Students scan to open the link on their phone or tablet. */}
+        <div className="flex-shrink-0 rounded-xl bg-surface border border-border p-3 flex flex-col items-center gap-1">
+          <QRCodeSVG
+            value={url}
+            size={112}
+            bgColor="transparent"
+            fgColor="currentColor"
+            level="M"
+          />
+          <span className="text-[10px] uppercase tracking-wider text-muted">
+            Scan to open
+          </span>
+        </div>
       </div>
     </section>
   );

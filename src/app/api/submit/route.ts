@@ -35,6 +35,7 @@ const RequestSchema = z.object({
       uncertain: z.string().max(10000),
     }),
     accessibility_profile: z.string().max(40).nullable().optional(),
+    group_label: z.string().max(80).nullable().optional(),
   }),
 });
 

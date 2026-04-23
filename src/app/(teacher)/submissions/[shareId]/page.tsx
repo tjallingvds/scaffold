@@ -102,8 +102,17 @@ function SubmissionCard({ submission }: { submission: StoredSubmission }) {
         className="w-full text-left px-4 py-3 flex items-center justify-between gap-4 hover:bg-subtle transition-colors"
       >
         <div className="min-w-0 flex-1">
-          <div className="text-sm font-medium text-foreground truncate">
-            {d.assignment_title}
+          <div className="text-sm font-medium text-foreground truncate flex items-center gap-2">
+            {d.group_label ? (
+              <>
+                <span className="inline-flex items-center rounded-full bg-accent-soft text-accent-ink text-[10px] uppercase tracking-wider px-2 py-0.5 font-semibold">
+                  Pair · {d.group_label}
+                </span>
+                <span className="truncate">{d.assignment_title}</span>
+              </>
+            ) : (
+              d.assignment_title
+            )}
           </div>
           <div className="text-xs text-muted mt-0.5">
             {when} · {d.exchanges_used} round
