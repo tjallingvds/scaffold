@@ -121,7 +121,7 @@ function PromptRunner({ prompt }: { prompt: PromptTemplate }) {
   return (
     <div className="max-w-3xl mx-auto px-6 lg:px-10 py-8 flex flex-col gap-6">
       <header>
-        <h2 className="text-xl font-semibold tracking-tight text-foreground">
+        <h2 className="font-display text-2xl text-foreground leading-tight">
           {prompt.name}
         </h2>
         <p className="text-sm text-muted mt-1">{prompt.description}</p>

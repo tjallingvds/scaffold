@@ -82,20 +82,28 @@
   --color-chrome-soft: var(--chrome-soft);
   --color-chrome-ink: var(--chrome-ink);
   --color-chrome-muted: var(--chrome-muted);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --font-sans: var(--font-sans);
+  --font-display: var(--font-display);
+  --font-mono: var(--font-mono);
 }
 
 html,
 body {
   background: var(--page);
   color: var(--foreground);
-  font-family: var(--font-geist-sans), ui-sans-serif, system-ui, -apple-system,
+  font-family: var(--font-sans), ui-sans-serif, system-ui, -apple-system,
     "Segoe UI", Roboto, sans-serif;
-  font-feature-settings: "ss01", "cv11", "zero";
+  font-feature-settings: "cv02", "cv11", "ss01";
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+/* Editorial serif heading face. Used for page titles and hero copy. */
+.font-display {
+  font-family: var(--font-display), ui-serif, Georgia, "Times New Roman", serif;
+  font-weight: 400;
+  letter-spacing: -0.005em;
 }
 
 :where(input, textarea, select, button, a):focus-visible {

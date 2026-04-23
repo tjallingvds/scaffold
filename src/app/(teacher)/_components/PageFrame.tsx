@@ -15,13 +15,13 @@ export function PageFrame({
 }) {
   return (
     <div className="flex flex-col h-full min-h-0 bg-surface">
-      <header className="px-6 lg:px-10 pt-10 pb-5 flex items-end justify-between flex-shrink-0 gap-4 border-b border-border">
+      <header className="px-6 lg:px-10 pt-8 pb-4 flex items-end justify-between flex-shrink-0 gap-4 border-b border-border">
         <div>
-          <h1 className="text-3xl md:text-[2.6rem] font-semibold tracking-[-0.025em] text-foreground leading-[1.05]">
+          <h1 className="font-display text-2xl md:text-[1.9rem] text-foreground leading-[1.1]">
             {title}
           </h1>
           {subtitle && (
-            <p className="text-base text-muted mt-2 max-w-2xl leading-relaxed">
+            <p className="text-sm text-muted mt-1.5 max-w-2xl leading-relaxed">
               {subtitle}
             </p>
           )}

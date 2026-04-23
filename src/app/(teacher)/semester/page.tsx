@@ -197,7 +197,7 @@ export default function SemesterPage() {
                 ]}
               />
               <header>
-                <h2 className="text-xl font-semibold tracking-tight text-foreground">
+                <h2 className="font-display text-2xl text-foreground leading-tight">
                   {plan.course_title}
                 </h2>
                 <p className="text-sm text-muted mt-1">{plan.total_weeks} weeks</p>

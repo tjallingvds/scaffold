@@ -8,7 +8,7 @@ export default function AboutPage() {
         <div className="max-w-3xl mx-auto px-6 lg:px-10 py-10 flex flex-col gap-14">
           {/* The problem */}
           <section className="flex flex-col gap-3">
-            <h2 className="text-xl font-semibold tracking-tight text-foreground">
+            <h2 className="font-display text-[1.65rem] text-foreground leading-tight">
               The problem
             </h2>
             <p className="text-sm text-foreground leading-relaxed max-w-2xl">
@@ -34,7 +34,7 @@ export default function AboutPage() {
           {/* Five principles */}
           <section className="flex flex-col gap-5">
             <div>
-              <h2 className="text-xl font-semibold tracking-tight text-foreground">
+              <h2 className="font-display text-[1.65rem] text-foreground leading-tight">
                 Five guiding principles
               </h2>
               <p className="text-sm text-muted mt-1">
@@ -88,7 +88,7 @@ export default function AboutPage() {
           {/* The three-phase cycle */}
           <section className="flex flex-col gap-4">
             <div>
-              <h2 className="text-xl font-semibold tracking-tight text-foreground">
+              <h2 className="font-display text-[1.65rem] text-foreground leading-tight">
                 Why students see three steps
               </h2>
               <p className="text-sm text-muted mt-1">
@@ -125,7 +125,7 @@ export default function AboutPage() {
           {/* Division of labor */}
           <section className="flex flex-col gap-4">
             <div>
-              <h2 className="text-xl font-semibold tracking-tight text-foreground">
+              <h2 className="font-display text-[1.65rem] text-foreground leading-tight">
                 What AI should do. What people should do.
               </h2>
               <p className="text-sm text-muted mt-1">
@@ -159,7 +159,7 @@ export default function AboutPage() {
 
           {/* How teachers use Scaffold */}
           <section className="flex flex-col gap-4">
-            <h2 className="text-xl font-semibold tracking-tight text-foreground">
+            <h2 className="font-display text-[1.65rem] text-foreground leading-tight">
               How to use Scaffold
             </h2>
 
@@ -226,7 +226,7 @@ export default function AboutPage() {
 
           {/* Sample activities */}
           <section className="flex flex-col gap-4">
-            <h2 className="text-xl font-semibold tracking-tight text-foreground">
+            <h2 className="font-display text-[1.65rem] text-foreground leading-tight">
               Assignment templates built in
             </h2>
             <div className="grid gap-3 sm:grid-cols-2">
@@ -260,7 +260,7 @@ export default function AboutPage() {
 
           {/* Caveats */}
           <section className="flex flex-col gap-3 border-t border-border pt-8">
-            <h2 className="text-xl font-semibold tracking-tight text-foreground">
+            <h2 className="font-display text-[1.65rem] text-foreground leading-tight">
               What this tool cannot do
             </h2>
             <p className="text-sm text-foreground leading-relaxed max-w-2xl">

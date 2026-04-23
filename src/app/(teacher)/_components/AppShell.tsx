@@ -30,7 +30,7 @@ function Logo() {
       >
         S
       </span>
-      <span className="text-base font-semibold tracking-tight text-chrome-ink">
+      <span className="font-display text-[1.15rem] text-chrome-ink leading-none">
         Scaffold
       </span>
     </div>

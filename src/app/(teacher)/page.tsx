@@ -30,7 +30,7 @@ export default function Home() {
     <div className="h-full overflow-y-auto bg-surface">
       <div className="max-w-3xl mx-auto px-5 sm:px-6 lg:px-10 py-10 sm:py-14 flex flex-col gap-10 sm:gap-14">
         <header className="flex flex-col gap-5">
-          <h1 className="text-3xl sm:text-4xl md:text-5xl font-semibold tracking-[-0.025em] text-foreground leading-[1.05]">
+          <h1 className="font-display text-3xl sm:text-4xl md:text-[2.75rem] text-foreground leading-[1.05]">
             What do you want to make?
           </h1>
           <div className="rounded-2xl border border-border bg-subtle p-5 flex flex-col gap-3">

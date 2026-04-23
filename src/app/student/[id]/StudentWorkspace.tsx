@@ -322,7 +322,7 @@ export function StudentWorkspace({
                 Assignment · Grade {plan.grade_level} · ~{plan.time_minutes} min
                 {groupLabel.trim() && ` · ${groupLabel.trim()}`}
               </div>
-              <h1 className="text-sm md:text-base font-semibold tracking-tight text-chrome-ink leading-tight truncate">
+              <h1 className="font-display text-base md:text-lg text-chrome-ink leading-tight truncate">
                 {plan.title}
               </h1>
             </div>
@@ -567,7 +567,7 @@ function Welcome({
         <div className="text-[10px] uppercase tracking-[0.14em] text-accent font-semibold mb-1">
           Welcome
         </div>
-        <h2 className="text-3xl font-semibold tracking-tight text-foreground leading-[1.15] inline-flex items-start">
+        <h2 className="font-display text-2xl sm:text-3xl text-foreground leading-[1.1] inline-flex items-start">
           Three steps. About {plan.time_minutes} minutes.
           <Help label="Why three steps">
             <p className="font-medium mb-1">Why it works this way.</p>
@@ -681,7 +681,7 @@ function TaskBanner({
           }`}
         />
       </div>
-      <h2 className="text-lg font-semibold tracking-tight text-foreground">
+      <h2 className="font-display text-xl text-foreground leading-tight">
         {step.title}
       </h2>
       <p className="text-sm text-foreground/85 leading-relaxed whitespace-pre-wrap">
@@ -1307,7 +1307,7 @@ function SubmitView({
             You&rsquo;re done
           </div>
         </div>
-        <h2 className="text-xl font-semibold tracking-tight text-foreground mb-1 inline-flex items-center">
+        <h2 className="font-display text-2xl text-foreground mb-1 inline-flex items-center leading-tight">
           Here&rsquo;s everything you did.
           <Help label="What your teacher sees">
             <p className="mb-1">When you tap <strong>Submit to your teacher</strong>:</p>

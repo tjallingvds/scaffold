@@ -412,7 +412,7 @@ function AssignmentResult({
       />
 
       <section>
-        <h2 className="text-xl font-semibold tracking-tight text-foreground">
+        <h2 className="font-display text-2xl text-foreground leading-tight">
           {plan.title}
         </h2>
         <p className="text-sm text-muted mt-1">
