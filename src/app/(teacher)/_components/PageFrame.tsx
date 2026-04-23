@@ -15,18 +15,20 @@ export function PageFrame({
 }) {
   return (
     <div className="flex flex-col h-full min-h-0 bg-surface">
-      <header className="px-6 lg:px-10 pt-8 pb-4 flex items-end justify-between flex-shrink-0 gap-4 border-b border-border">
-        <div>
-          <h1 className="font-display text-2xl md:text-[1.9rem] text-foreground leading-[1.1]">
-            {title}
-          </h1>
-          {subtitle && (
-            <p className="text-sm text-muted mt-1.5 max-w-2xl leading-relaxed">
-              {subtitle}
-            </p>
-          )}
+      <header className="pt-8 pb-4 flex-shrink-0 border-b border-border">
+        <div className="max-w-3xl mx-auto px-6 lg:px-10 flex items-end justify-between gap-4">
+          <div>
+            <h1 className="font-display text-2xl md:text-[1.9rem] text-foreground leading-[1.1]">
+              {title}
+            </h1>
+            {subtitle && (
+              <p className="text-sm text-muted mt-1.5 max-w-2xl leading-relaxed">
+                {subtitle}
+              </p>
+            )}
+          </div>
+          {actions && <div className="flex items-center gap-2">{actions}</div>}
         </div>
-        {actions && <div className="flex items-center gap-2">{actions}</div>}
       </header>
       <div className="flex-1 min-h-0 overflow-hidden">{children}</div>
     </div>
