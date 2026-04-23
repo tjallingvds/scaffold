@@ -16,6 +16,7 @@ const ITEMS: NavItem[] = [
   { href: "/prompts", label: "Prompts" },
   { href: "/policy", label: "Policy" },
   { href: "/semester", label: "Semester" },
+  { href: "/about", label: "Why" },
 ];
 
 export function Nav() {

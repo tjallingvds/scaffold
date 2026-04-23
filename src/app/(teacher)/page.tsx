@@ -33,7 +33,7 @@ export default function Home() {
           <h1 className="text-3xl sm:text-4xl md:text-5xl font-semibold tracking-[-0.025em] text-foreground leading-[1.05]">
             What do you want to make?
           </h1>
-          <div className="rounded-2xl border border-border bg-subtle p-5 flex flex-col gap-2">
+          <div className="rounded-2xl border border-border bg-subtle p-5 flex flex-col gap-3">
             <div className="text-[10px] uppercase tracking-[0.14em] text-muted font-semibold">
               What is Scaffold?
             </div>
@@ -42,10 +42,16 @@ export default function Home() {
               letting it do the thinking for students. You describe what
               you&rsquo;re teaching. Scaffold writes the lesson plan,
               assignment, rubric, and a student-facing AI tutor that refuses to
-              hand out answers. Every output is built around a three-phase
+              hand out answers. Every output is built around a three-step
               cycle: students think first, then use AI as a check, then
               reflect.
             </p>
+            <Link
+              href="/about"
+              className="text-xs text-foreground font-medium hover:underline self-start"
+            >
+              Read the full rationale, principles, and how to use this →
+            </Link>
           </div>
         </header>
 
