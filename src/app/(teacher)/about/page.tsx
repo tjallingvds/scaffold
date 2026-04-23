@@ -274,11 +274,6 @@ export default function AboutPage() {
               the line on the process, and whether students engage with it in
               good faith.
             </p>
-            <p className="text-sm text-muted leading-relaxed max-w-2xl">
-              Scaffold does not collect student names or personal data.
-              Students walk through share links anonymously. Submissions are
-              stored only against the share link they came from.
-            </p>
           </section>
 
           <footer className="border-t border-border pt-6 flex flex-col gap-2">
