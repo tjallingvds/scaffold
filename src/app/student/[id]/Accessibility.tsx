@@ -279,7 +279,7 @@ export function AccessibilityMenu({
               )}
             </div>
             <p className="text-xs text-muted leading-relaxed -mt-1">
-              Picking a profile also changes how the AI tutor talks to you - shorter sentences, clearer structure, simpler words, etc.
+              Picking a profile also changes how the AI tutor talks to you. Shorter sentences, clearer structure, simpler words.
             </p>
 
             <SectionLabel>Quick setup</SectionLabel>

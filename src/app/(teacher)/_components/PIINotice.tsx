@@ -15,7 +15,7 @@ export function PIINotice({ text }: { text: string }) {
       </div>
       <div className="text-foreground/80">
         Detected: {findings.map((f) => f.label).join(", ")}. Scaffold is a teacher tool
-        and should not hold student-identifying data - please remove it before generating.
+        and should not hold student identifying data. Please remove it before generating.
       </div>
     </div>
   );

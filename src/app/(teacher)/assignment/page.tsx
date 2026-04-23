@@ -249,19 +249,19 @@ function AssignmentPageInner() {
                     <p className="font-medium mb-1">Five assignment templates.</p>
                     <ul className="list-disc pl-4 flex flex-col gap-1">
                       <li>
-                        <strong>Compare & Critique</strong> - student drafts, compares with AI, writes a final position.
+                        <strong>Compare &amp; Critique.</strong> Student drafts, compares with AI, writes a final position.
                       </li>
                       <li>
-                        <strong>AI as Feedback Tool</strong> - AI critiques a student draft; student decides what to take.
+                        <strong>AI as Feedback Tool.</strong> AI critiques a student draft; student decides what to take.
                       </li>
                       <li>
-                        <strong>Multi-Perspective</strong> - student commits, AI surfaces alternative readings.
+                        <strong>Multi-Perspective.</strong> Student commits, AI surfaces alternative readings.
                       </li>
                       <li>
-                        <strong>Break the AI</strong> - student probes AI for errors or bias on a topic.
+                        <strong>Break the AI.</strong> Student probes AI for errors or bias on a topic.
                       </li>
                       <li>
-                        <strong>Scaffolded Exploration</strong> - student owns the research question; AI only maps terrain.
+                        <strong>Scaffolded Exploration.</strong> Student owns the research question; AI only maps terrain.
                       </li>
                     </ul>
                   </Help>
@@ -545,7 +545,7 @@ function ShareCard({
             Create a student link
           </h3>
           <p className="text-xs text-muted mt-1">
-            One URL. Paste in your LMS. Students open it - no setup on their end.
+            One URL. Paste in your LMS. Students open it. No setup on their end.
           </p>
         </div>
         <button

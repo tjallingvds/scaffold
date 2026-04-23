@@ -40,7 +40,7 @@ export default function Home() {
             <p className="text-sm text-foreground leading-relaxed max-w-2xl">
               A planning tool for teachers who want to use AI in class without
               letting it do the thinking for students. You describe what
-              you&rsquo;re teaching - Scaffold writes the lesson plan,
+              you&rsquo;re teaching. Scaffold writes the lesson plan,
               assignment, rubric, and a student-facing AI tutor that refuses to
               hand out answers. Every output is built around a three-phase
               cycle: students think first, then use AI as a check, then
@@ -153,7 +153,7 @@ export default function Home() {
 
         <footer className="border-t border-border pt-6 text-xs text-muted leading-relaxed">
           No student accounts, no student data stored. Scaffold is a teacher tool
-          - students walk through share links anonymously.
+          Students walk through share links anonymously.
         </footer>
       </div>
     </div>

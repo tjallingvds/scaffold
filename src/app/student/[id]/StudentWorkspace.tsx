@@ -413,7 +413,7 @@ export function StudentWorkspace({
           </div>
 
           <footer className="mt-12 pt-5 border-t border-border text-xs text-muted leading-relaxed flex items-center justify-between gap-4">
-            <span>The tutor answers factual questions and pushes back on thinking questions - by design.</span>
+            <span>The tutor answers factual questions but pushes back on thinking questions. That&rsquo;s by design.</span>
             <span className="font-mono opacity-60 whitespace-nowrap">#{shareId}</span>
           </footer>
         </main>
@@ -488,7 +488,7 @@ function PhaseTimer({
           ? "border-warn text-warn bg-warn-soft"
           : "border-chrome-soft text-chrome-muted bg-chrome-soft"
       }`}
-      title={over ? "Past suggested time - keep going if you need to." : "Suggested time for this step"}
+      title={over ? "Past suggested time. Keep going if you need to." : "Suggested time for this step"}
     >
       {over ? `+${Math.floor((elapsed - totalSec) / 60)}m over` : `${mm}:${ss.toString().padStart(2, "0")} left`}
     </div>
@@ -541,20 +541,16 @@ function Welcome({ plan, onStart }: { plan: AssignmentPlan; onStart: () => void 
           Welcome
         </div>
         <h2 className="text-3xl font-semibold tracking-tight text-foreground leading-[1.15] inline-flex items-start">
-          Let&rsquo;s build your thinking - in three short passes.
-          <Help label="Why three passes">
-            <p className="font-medium mb-1">Why it&rsquo;s structured this way.</p>
+          Three steps. About {plan.time_minutes} minutes.
+          <Help label="Why three steps">
+            <p className="font-medium mb-1">Why it works this way.</p>
             <p>
-              Research shows that when students use AI before they&rsquo;ve tried anything themselves, their own thinking gets weaker over time. So Phase 1 is yours alone. The AI only shows up after you&rsquo;ve written something of your own - and even then, it&rsquo;s built to ask questions, not hand you answers.
+              Students who lean on AI too early often stop thinking for themselves. So Step 1 is yours alone: no AI. Step 2 adds an AI tutor built to ask you questions, not answer them. Step 3 is a short reflection in your own voice. That order protects your thinking.
             </p>
           </Help>
         </h2>
         <p className="text-base text-muted leading-relaxed mt-3 max-w-2xl">
-          About <strong className="text-foreground">{plan.time_minutes} minutes</strong>.
-          First you&rsquo;ll think for yourself - no AI. Then an AI tutor will help
-          you stress-test your ideas: it&rsquo;ll answer factual questions freely, but
-          won&rsquo;t tell you what to think or hand you an answer. Finally, a short
-          reflection in your own voice.
+          Step 1: think for yourself, no AI. Step 2: talk to an AI tutor about what you wrote. It won&rsquo;t hand you an answer; it&rsquo;ll push back. Step 3: reflect on what changed.
         </p>
       </div>
 
@@ -600,11 +596,11 @@ function Welcome({ plan, onStart }: { plan: AssignmentPlan; onStart: () => void 
         onClick={onStart}
         className="self-end rounded-full bg-accent text-white px-6 py-3 text-sm font-medium hover:bg-accent-ink transition-colors shadow-sm hover:shadow"
       >
-        I&rsquo;m ready - start step 1 →
+        Start step 1 →
       </button>
 
       <p className="text-xs text-muted text-center">
-        The AI tutor is a stress-test, not a shortcut. That&rsquo;s the whole
+        The AI tutor is a stress test, not a shortcut. That&rsquo;s the whole
         point of this.
       </p>
     </section>
@@ -700,40 +696,42 @@ function Phase1({
       <div className="rounded-xl border border-border bg-surface p-5">
         <div className="flex items-baseline justify-between mb-1">
           <h3 className="text-base font-semibold text-foreground inline-flex items-center">
-            Take three short passes at it
+            Answer these three questions first
             <Help label="Why these three questions">
+              <p className="mb-1">
+                Before the AI shows up, you&rsquo;re writing down what&rsquo;s already in your head. This is how you find the gaps in your own thinking.
+              </p>
               <p>
-                Writing down what you <em>already know</em>, what&rsquo;s <em>confusing</em>, and what you&rsquo;ve <em>tried</em> before looking anything up is called metacognition. It makes you aware of what you actually do and don&rsquo;t understand, so when the AI tutor shows up, you can push it toward the gaps instead of just receiving an answer.
+                It&rsquo;s fine to be wrong or confused right now. You&rsquo;re not being graded on these answers; you&rsquo;re using them to figure out what to ask the AI tutor later.
               </p>
             </Help>
           </h3>
           <span className="text-[10px] uppercase tracking-wider bg-subtle text-muted px-2 py-0.5 rounded">
-            Your thinking
+            Your thinking only
           </span>
         </div>
         <p className="text-sm text-muted leading-relaxed">
-          Confused or wrong is fine - messy thinking is still thinking. These
-          three prompts are how you satisfy this step. Go in any order.
+          Confused or wrong is fine. Messy thinking is still thinking. Answer in any order.
         </p>
       </div>
 
       <ThinkingField
-        label="What do you already know about this task?"
-        hint="Two or three sentences. Facts, intuitions, half-formed ideas - all of it counts."
+        label="What do you already know about this?"
+        hint="Two or three sentences. Facts, intuitions, half-formed ideas all count."
         value={known}
         onChange={setKnown}
         placeholder="I think… / I remember that…"
       />
       <ThinkingField
-        label="What is confusing about it?"
-        hint="Name the specific thing, not just &ldquo;everything.&rdquo;"
+        label="What is confusing?"
+        hint="Name the specific thing. Not just &ldquo;everything.&rdquo;"
         value={confused}
         onChange={setConfused}
         placeholder="I'm not sure how / why / whether…"
       />
       <ThinkingField
         label="What have you already tried or considered?"
-        hint="Notes, a quick guess, a hunch - whatever you've considered so far."
+        hint="Notes, a quick guess, a hunch. Whatever you&rsquo;ve already thought about."
         value={tried}
         onChange={setTried}
         placeholder="I tried… / My first guess was…"
@@ -745,7 +743,7 @@ function Phase1({
             ✓
           </span>
           <div className="flex-1">
-            <div className="text-accent-ink font-medium">Nice work - unlocking AI.</div>
+            <div className="text-accent-ink font-medium">Nice work. Unlocking AI.</div>
             {checkResult.feedback && (
               <p className="text-foreground/80 text-xs mt-0.5">{checkResult.feedback}</p>
             )}
@@ -772,11 +770,11 @@ function Phase1({
               ← Back
             </button>
             <span className="text-xs text-muted">
-              {totalChars} characters ·{" "}
+              {totalChars} characters.{" "}
               {ready ? (
-                <span className="text-accent font-medium">Ready</span>
+                <span className="text-accent font-medium">Ready to continue.</span>
               ) : (
-                <>write a bit in each field</>
+                <>Write something in each of the three boxes.</>
               )}
             </span>
           </div>
@@ -789,10 +787,10 @@ function Phase1({
           >
             {checkBusy ? (
               <>
-                <Spinner /> Checking your thinking…
+                <Spinner /> Checking your answers…
               </>
             ) : (
-              <>Continue to AI →</>
+              <>Continue to step 2 →</>
             )}
           </button>
         }
@@ -868,25 +866,29 @@ function Phase2({
     <section className="flex flex-col gap-5">
       <TaskBanner stepNumber={2} step={stepInstructions} badge="With AI tutor" />
 
-      {/* The REAL work surface - student writes their actual answer here */}
+      {/* The real work surface. Student writes their actual answer here. */}
       <div className="rounded-xl border border-border bg-surface p-5">
         <div className="flex items-baseline justify-between mb-2">
           <h3 className="text-base font-semibold tracking-tight text-foreground inline-flex items-center">
             Your draft
             <Help label="About your draft">
+              <p className="mb-1">
+                This is the answer you turn in. Write it in your own words.
+              </p>
               <p>
-                This is the actual thing you turn in - <em>your own words</em>. Keep the AI tutor out of this box; don&rsquo;t paste AI text into it. Write what you&rsquo;d say if you had to defend the idea in class, then use the tutor below to poke holes in what you wrote.
+                Don&rsquo;t paste AI text into this box. Write what you&rsquo;d
+                say if you had to defend the idea in class. Then use the tutor
+                below to poke holes in what you wrote.
               </p>
             </Help>
           </h3>
           <span className="text-[10px] uppercase tracking-wider bg-subtle text-muted px-2 py-0.5 rounded">
-            This is what you turn in
+            You turn this in
           </span>
         </div>
         <p className="text-sm text-muted leading-relaxed mb-3">
-          Start writing your actual answer here. Use the AI tutor below to
-          challenge what you&rsquo;ve written. Ask about anything confusing; ask
-          for a counterexample; ask to have your weakest claim pushed back on.
+          Write your real answer to the task here. In your own words. The tutor
+          below can challenge it, but this box stays yours.
         </p>
         <textarea
           value={draft}
@@ -896,9 +898,11 @@ function Phase2({
           className="w-full bg-surface border border-border rounded-lg px-4 py-3 text-sm leading-relaxed outline-none transition-colors focus:border-foreground"
         />
         <div className="mt-2 text-xs text-muted">
-          {draft.trim().length} characters
+          {draft.trim().length} characters.
           {draft.trim().length >= 80 && (
-            <span className="text-foreground font-medium ml-1">· long enough</span>
+            <span className="text-foreground font-medium ml-1">
+              Long enough.
+            </span>
           )}
         </div>
       </div>
@@ -932,8 +936,13 @@ function Phase2({
               </div>
             </div>
           </div>
-          <div className="text-[10px] uppercase tracking-wider text-muted whitespace-nowrap">
+          <div className="text-[10px] uppercase tracking-wider text-muted whitespace-nowrap inline-flex items-center">
             Round {exchangesUsed || 0}
+            <Help label="What&rsquo;s a round" align="right">
+              <p>
+                One round equals you asking the tutor something and the tutor replying once. There&rsquo;s no hard limit, but after about five rounds the tutor usually isn&rsquo;t adding much. Keep going if it&rsquo;s still useful.
+              </p>
+            </Help>
           </div>
         </header>
 
@@ -944,7 +953,7 @@ function Phase2({
           {chat.length === 0 && (
             <div className="flex flex-col items-center justify-center py-6 gap-4">
               <p className="text-sm text-muted italic text-center max-w-md">
-                Ask anything - or pick a move to get started.
+                Ask anything, or pick a move below to get started.
               </p>
               <div className="flex flex-wrap justify-center gap-2 max-w-xl">
                 {STARTER_MOVES.map((m, i) => (
@@ -1002,9 +1011,7 @@ function Phase2({
               ◆
             </span>
             <span>
-              You&rsquo;ve had {exchangesUsed} rounds with the tutor - usually
-              plenty. Keep going if it&rsquo;s still useful, or move on to the
-              reflection when you&rsquo;re ready.
+              You&rsquo;ve had {exchangesUsed} rounds with the tutor. That&rsquo;s usually plenty. Keep going if it&rsquo;s still useful, or move on to the reflection when you&rsquo;re ready.
             </span>
           </div>
         )}
@@ -1025,7 +1032,7 @@ function Phase2({
                 sendMessage();
               }
             }}
-            placeholder="Ask the tutor something a textbook couldn't answer for you."
+            placeholder="Ask the tutor something a textbook couldn&rsquo;t answer for you."
             rows={2}
             className="w-full bg-surface border border-border rounded-md px-3 py-2 text-sm resize-none outline-none transition-colors focus:border-accent"
           />
@@ -1106,18 +1113,25 @@ function Phase3({
       <TaskBanner stepNumber={3} step={stepInstructions} badge="Your voice" />
 
       <div className="rounded-xl border border-border bg-surface p-5">
-        <h3 className="text-base font-semibold text-foreground mb-1">
-          Three reflection prompts
+        <h3 className="text-base font-semibold text-foreground mb-1 inline-flex items-center">
+          Three short reflection questions
+          <Help label="Why reflect">
+            <p className="mb-1">
+              This is where the work becomes learning you actually keep.
+            </p>
+            <p>
+              Honest beats polished. A short, specific answer about one thing you changed is worth more than a long, vague one.
+            </p>
+          </Help>
         </h3>
         <p className="text-sm text-muted leading-relaxed">
-          Honest beats polished. These turn the work you did into learning you
-          keep.
+          Answer in your own words. Your teacher sees these alongside your draft.
         </p>
       </div>
 
       <ThinkingField
         label="What changed in your thinking?"
-        hint="Compare your first attempt to where you are now."
+        hint="Compare your first attempt to where you are now. Name one specific thing that shifted."
         value={reflection1}
         onChange={setReflection1}
         placeholder="My first instinct was… but now I think…"
@@ -1127,14 +1141,14 @@ function Phase3({
         hint="Rejecting with a reason is often stronger than accepting."
         value={reflection2}
         onChange={setReflection2}
-        placeholder="I used the idea that… I didn't take the suggestion to… because…"
+        placeholder="I used the idea that… I didn&rsquo;t take the suggestion to… because…"
       />
       <ThinkingField
         label="What are you still uncertain about?"
-        hint="The edges of your understanding. Name one, not ten."
+        hint="The edges of your understanding. Name one thing, not ten."
         value={reflection3}
         onChange={setReflection3}
-        placeholder="I'm still not sure about…"
+        placeholder="I&rsquo;m still not sure about…"
       />
       <StickyActionBar
         left={
@@ -1248,12 +1262,22 @@ function SubmitView({
             You&rsquo;re done
           </div>
         </div>
-        <h2 className="text-xl font-semibold tracking-tight text-foreground mb-1">
-          Here&rsquo;s the whole arc of your thinking.
+        <h2 className="text-xl font-semibold tracking-tight text-foreground mb-1 inline-flex items-center">
+          Here&rsquo;s everything you did.
+          <Help label="What your teacher sees">
+            <p className="mb-1">When you tap <strong>Submit to your teacher</strong>:</p>
+            <ul className="list-disc pl-4 flex flex-col gap-1">
+              <li>They see your Step 1 answers, your draft, the tutor conversation, and your reflection.</li>
+              <li>They don&rsquo;t see your name (Scaffold doesn&rsquo;t ask for it).</li>
+              <li>They don&rsquo;t see the accessibility settings you picked.</li>
+            </ul>
+            <p className="mt-2">
+              If your class also wants a plain-text copy (paste it into a doc, email, an LMS), the <em>Copy text</em> button gives you that.
+            </p>
+          </Help>
         </h2>
         <p className="text-sm text-foreground/80 leading-relaxed">
-          Your first thoughts, your conversation with the tutor, and what changed.
-          Copy it and hand it in the way your teacher asked.
+          Review it. Then submit to your teacher below, or copy the text if your class uses something else.
         </p>
       </div>
 

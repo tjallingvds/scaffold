@@ -199,13 +199,13 @@ export default function LessonPage() {
                     <p className="font-medium mb-1">The three-phase cycle.</p>
                     <ul className="list-disc pl-4 flex flex-col gap-1">
                       <li>
-                        <strong>Pre-Engagement</strong> - AI off. Students write their initial attempt and surface what they already know and where they&rsquo;re confused.
+                        <strong>Pre-Engagement.</strong> AI off. Students write their initial attempt and surface what they already know and where they&rsquo;re confused.
                       </li>
                       <li>
-                        <strong>Guided Engagement</strong> - bounded AI. Students use AI to challenge or sharpen their attempt with a specific prompt template.
+                        <strong>Guided Engagement.</strong> Bounded AI. Students use AI to challenge or sharpen their attempt with a specific prompt template.
                       </li>
                       <li>
-                        <strong>Reflective Engagement</strong> - open AI. Students integrate and reflect, deciding what the AI helped with and what they&rsquo;re still uncertain about.
+                        <strong>Reflective Engagement.</strong> Open AI. Students integrate and reflect, deciding what the AI helped with and what they&rsquo;re still uncertain about.
                       </li>
                     </ul>
                     <p className="mt-2">Picking only one phase generates just that segment.</p>
@@ -235,7 +235,7 @@ export default function LessonPage() {
                   rows={3}
                   value={considerations}
                   onChange={(e) => setConsiderations(e.target.value)}
-                  placeholder="Neurodivergent profiles, ELL level, accommodations - no student names."
+                  placeholder="Neurodivergent profiles, ELL level, accommodations. No student names."
                 />
                 <div className="mt-2">
                   <PIINotice text={`${subject} ${considerations} ${concept} ${objective}`} />
@@ -315,12 +315,12 @@ function lessonToSharedPlan(
     const instructions =
       phase.activities.length > 0
         ? phase.activities
-            .map((a) => `• ${a.name} (${a.minutes} min) - ${a.description}`)
+            .map((a) => `• ${a.name} (${a.minutes} min). ${a.description}`)
             .join("\n")
         : phase.title;
     const deliverable =
       phase.phase === "pre_engagement"
-        ? "Your own first attempt - no AI, no internet."
+        ? "Your own first attempt. No AI, no internet."
         : phase.phase === "guided_engagement"
           ? "The AI interaction log + updated thinking."
           : "A written reflection on what changed.";
@@ -379,7 +379,7 @@ function lessonToSharedPlan(
       {
         dimension: "Reflection",
         focus: "Which AI suggestions were accepted or rejected, and why.",
-        high_proficiency: "Names what changed, what didn't, and why - with evidence.",
+        high_proficiency: "Names what changed, what didn't, and why. With evidence.",
         low_proficiency: "Generic, confirms original reading without evidence.",
         weight_percent: 30,
       },
@@ -389,18 +389,18 @@ function lessonToSharedPlan(
 
 Two kinds of questions will come at you. Handle them DIFFERENTLY.
 
-1. INFORMATIONAL QUESTIONS - facts, definitions, background, what happens in a source. Answer concisely (under 120 words), then invite the student back to their own thinking with one short question.
+1. INFORMATIONAL QUESTIONS. Facts, definitions, background, what happens in a source. Answer concisely (under 120 words), then invite the student back to their own thinking with one short question.
 
-2. THINKING QUESTIONS - asking you to take a position, write a draft, give "the answer", or make the judgment for them. Respond with a question that helps them think, or point them to something they could explore on their own. Never tell them what the correct answer is.
+2. THINKING QUESTIONS. Asking you to take a position, write a draft, give "the answer", or make the judgment for them. Respond with a question that helps them think, or point them to something they could explore on their own. Never tell them what the correct answer is.
 
 If the student asks you to do the thinking for them THREE TIMES IN A ROW, say so plainly:
-"It looks like you want me to do the thinking for you. I won't. Go write out your best guess - even a bad one - and come back. I'll push back on what you wrote."
+"It looks like you want me to do the thinking for you. I won't. Go write out your best guess, even a bad one, and come back. I'll push back on what you wrote."
 
 Hard rules, always:
 - Never write sentences, paragraphs, or drafts the student could paste as their own.
 - Never produce a model answer "for their reference".
 - Keep every response under 180 words.
-- If they seem genuinely stuck, offer a specific hint - not the answer.
+- If they seem genuinely stuck, offer a specific hint, not the answer.
 
 Topic: ${concept}
 Learning objective: ${lesson.learning_objective}`,
@@ -460,7 +460,7 @@ function ShareLessonCard({
             Make this lesson available to students
           </h3>
           <p className="text-xs text-muted mt-1">
-            One URL. Students walk through the three phases on their own - first
+            One URL. Students walk through the three phases on their own. First
             attempt, then AI tutor, then reflection.
           </p>
         </div>

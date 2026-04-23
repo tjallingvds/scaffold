@@ -4,17 +4,17 @@ import type { LessonPlan, PhaseBlock } from "@/lib/types";
 
 const PHASE_META = {
   pre_engagement: {
-    label: "Phase 1 - Pre-Engagement",
+    label: "Phase 1 · Pre-Engagement",
     sublabel: "No AI",
     dotClass: "bg-accent-ink",
   },
   guided_engagement: {
-    label: "Phase 2 - Guided Engagement",
+    label: "Phase 2 · Guided Engagement",
     sublabel: "Bounded AI",
     dotClass: "bg-accent",
   },
   reflective_engagement: {
-    label: "Phase 3 - Reflective Engagement",
+    label: "Phase 3 · Reflective Engagement",
     sublabel: "Open AI",
     dotClass: "bg-indigo-600",
   },

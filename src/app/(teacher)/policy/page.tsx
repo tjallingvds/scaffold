@@ -121,13 +121,13 @@ export default function PolicyPage() {
                   <p className="font-medium mb-1">Three classroom AI policy templates.</p>
                   <ul className="list-disc pl-4 flex flex-col gap-1">
                     <li>
-                      <strong>Scaffold-only</strong> - AI permitted as a support (alt explanations, drafts critiqued) but not to generate original work.
+                      <strong>Scaffold-only.</strong> AI permitted as a support (alt explanations, drafts critiqued) but not to generate original work.
                     </li>
                     <li>
-                      <strong>Three-phase</strong> - every major assignment follows AI-off → bounded AI → open AI + reflection.
+                      <strong>Three-phase.</strong> Every major assignment follows AI-off → bounded AI → open AI + reflection.
                     </li>
                     <li>
-                      <strong>Assignment-specific</strong> - three assignment types with different AI rules (prohibited / bounded / required with documentation).
+                      <strong>Assignment-specific.</strong> Three assignment types with different AI rules (prohibited / bounded / required with documentation).
                     </li>
                   </ul>
                 </Help>

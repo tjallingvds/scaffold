@@ -138,7 +138,7 @@ export default function DifferentiatePage() {
                   Learner profiles
                   <Help label="About learner profiles">
                     <p>
-                      Each profile is a Universal Design for Learning (UDL) affordance. Scaffold produces a parallel version of your source text adapted to that profile - shorter sentences, added structural cues, in-context glosses for ELL, etc.
+                      Each profile is a Universal Design for Learning (UDL) affordance. Scaffold produces a parallel version of your source text adapted to that profile: shorter sentences, added structural cues, in-context glosses for ELL, and so on.
                     </p>
                     <p className="mt-2">
                       <strong>Crucial:</strong> the academic content stays the same. Only surface features change. A student who masters the adapted version has mastered the same concept.
