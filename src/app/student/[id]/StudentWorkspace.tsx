@@ -409,7 +409,7 @@ function PhaseTimer({
           ? "border-warn text-warn bg-warn-soft"
           : "border-chrome-soft text-chrome-muted bg-chrome-soft"
       }`}
-      title={over ? "Past suggested time — keep going if you need to." : "Suggested time for this step"}
+      title={over ? "Past suggested time - keep going if you need to." : "Suggested time for this step"}
     >
       {over ? `+${Math.floor((elapsed - totalSec) / 60)}m over` : `${mm}:${ss.toString().padStart(2, "0")} left`}
     </div>

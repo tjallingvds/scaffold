@@ -55,7 +55,7 @@ export async function saveShared(plan: AssignmentPlan): Promise<string> {
 
 export async function getShared(id: string): Promise<AssignmentPlan | null> {
   if (id === SAMPLE_SHARE_ID) return SAMPLE_ASSIGNMENT;
-  // Try memory first — covers same-process writes and demo mode.
+  // Try memory first - covers same-process writes and demo mode.
   const fromMem = memStore.get(id);
   if (fromMem) return fromMem;
 
