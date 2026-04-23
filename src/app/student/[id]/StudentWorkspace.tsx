@@ -412,8 +412,7 @@ export function StudentWorkspace({
             )}
           </div>
 
-          <footer className="mt-12 pt-5 border-t border-border text-xs text-muted leading-relaxed flex items-center justify-between gap-4">
-            <span>The tutor answers factual questions but pushes back on thinking questions. That&rsquo;s by design.</span>
+          <footer className="mt-12 pt-5 border-t border-border text-xs text-muted leading-relaxed flex items-center justify-end gap-4">
             <span className="font-mono opacity-60 whitespace-nowrap">#{shareId}</span>
           </footer>
         </main>
@@ -599,10 +598,6 @@ function Welcome({ plan, onStart }: { plan: AssignmentPlan; onStart: () => void 
         Start step 1 →
       </button>
 
-      <p className="text-xs text-muted text-center">
-        The AI tutor is a stress test, not a shortcut. That&rsquo;s the whole
-        point of this.
-      </p>
     </section>
   );
 }
@@ -1504,10 +1499,6 @@ function JourneyRail({
           ai=""
         />
 
-        <div className="mt-3 px-1 text-xs text-muted leading-relaxed">
-          The AI is a moment between your first thinking and your final thinking -
-          not a replacement for either.
-        </div>
       </div>
     </aside>
   );
