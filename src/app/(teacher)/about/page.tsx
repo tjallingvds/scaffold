@@ -6,6 +6,46 @@ export default function AboutPage() {
     <PageFrame title="Why Scaffold exists">
       <div className="h-full overflow-y-auto bg-surface">
         <div className="max-w-3xl mx-auto px-6 lg:px-10 py-10 flex flex-col gap-14">
+          {/* Guiding question */}
+          <section className="flex flex-col gap-3">
+            <div className="text-[10px] uppercase tracking-[0.14em] text-muted font-semibold">
+              The question behind Scaffold
+            </div>
+            <p className="font-display text-[1.9rem] text-foreground leading-[1.15] max-w-2xl">
+              How can AI support inclusive, personalized education without
+              taking over the thinking that makes learning stick?
+            </p>
+          </section>
+
+          {/* Current state */}
+          <section className="flex flex-col gap-4">
+            <div>
+              <h2 className="font-display text-[1.65rem] text-foreground leading-tight">
+                Where classrooms actually are right now
+              </h2>
+              <p className="text-sm text-muted mt-1">
+                Three pressures that shape the problem.
+              </p>
+            </div>
+            <div className="grid gap-3 sm:grid-cols-3">
+              <Stat
+                value="15–20%"
+                label="of students are neurodivergent"
+                body="One explanation does not reach the full room. Instruction has to flex."
+              />
+              <Stat
+                value="86%"
+                label="of students use AI daily"
+                body="Use is already universal. The choice is not whether AI is in the classroom, but how."
+              />
+              <Stat
+                value="↓"
+                label="brain-connectivity markers decline with heavy AI reliance"
+                body="When AI does the reasoning, the learner does not build it. Effort has to be protected."
+              />
+            </div>
+          </section>
+
           {/* The problem */}
           <section className="flex flex-col gap-3">
             <h2 className="font-display text-[1.65rem] text-foreground leading-tight">
@@ -83,6 +123,36 @@ export default function AboutPage() {
                 inApp="Differentiation Studio produces parallel variants for ADHD, dyslexia, ELL, executive function, autism, sensory sensitivity, cultural context, and reading level. Students can also pick their own profile in the student workspace, which changes how the AI tutor responds to them."
               />
             </ol>
+          </section>
+
+          {/* Benefits */}
+          <section className="flex flex-col gap-4">
+            <div>
+              <h2 className="font-display text-[1.65rem] text-foreground leading-tight">
+                What this buys you
+              </h2>
+              <p className="text-sm text-muted mt-1">
+                If the structure holds, four things get better at once.
+              </p>
+            </div>
+            <div className="grid gap-3 sm:grid-cols-2">
+              <Benefit
+                title="Inclusion by default"
+                body="Parallel formats for ADHD, dyslexia, ELL, executive function, autism, sensory sensitivity, and reading level. Not an accommodation you have to request."
+              />
+              <Benefit
+                title="Personalized support"
+                body="The tutor adapts tone, pacing, and scaffolding to the learner profile each student picks, without the teacher rewriting anything."
+              />
+              <Benefit
+                title="Active over passive use"
+                body="Students commit first, draft themselves, then evaluate what the AI offered. The tool never hands them a finished answer."
+              />
+              <Benefit
+                title="Teacher workload down"
+                body="Plans, differentiated variants, and policies that took hours now take one prompt and a revision pass. Submissions land in one inbox."
+              />
+            </div>
           </section>
 
           {/* The three-phase cycle */}
@@ -370,6 +440,37 @@ function Phase({
           {state}
         </span>
       </div>
+      <p className="text-xs text-muted leading-relaxed">{body}</p>
+    </div>
+  );
+}
+
+function Stat({
+  value,
+  label,
+  body,
+}: {
+  value: string;
+  label: string;
+  body: string;
+}) {
+  return (
+    <div className="rounded-2xl border border-border bg-surface p-5 flex flex-col gap-2">
+      <div className="font-display text-[2rem] leading-none text-foreground">
+        {value}
+      </div>
+      <div className="text-sm font-semibold text-foreground leading-snug">
+        {label}
+      </div>
+      <p className="text-xs text-muted leading-relaxed">{body}</p>
+    </div>
+  );
+}
+
+function Benefit({ title, body }: { title: string; body: string }) {
+  return (
+    <div className="rounded-2xl border border-border bg-surface p-5 flex flex-col gap-1.5">
+      <h3 className="text-sm font-semibold text-foreground">{title}</h3>
       <p className="text-xs text-muted leading-relaxed">{body}</p>
     </div>
   );
