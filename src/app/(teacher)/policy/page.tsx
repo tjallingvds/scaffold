@@ -7,6 +7,7 @@ import { RecentList, useLibrary } from "../_components/Library";
 import { RevisePrompt } from "../_components/RevisePrompt";
 import { ExampleChips } from "../_components/ExampleChips";
 import { POLICY_EXAMPLES } from "@/lib/templates/builder-examples";
+import { Help } from "../../_shared/Help";
 import { POLICY_TEMPLATES } from "@/lib/templates/policies";
 import type { PolicyDocument, PolicyRequest, PolicyTemplateId } from "@/lib/types";
 
@@ -114,7 +115,23 @@ export default function PolicyPage() {
               }}
             />
             <div className="flex flex-col gap-2">
-              <label className="text-sm font-medium text-foreground">Template</label>
+              <label className="text-sm font-medium text-foreground inline-flex items-center">
+                Template
+                <Help label="About policy templates">
+                  <p className="font-medium mb-1">Three classroom AI policy templates.</p>
+                  <ul className="list-disc pl-4 flex flex-col gap-1">
+                    <li>
+                      <strong>Scaffold-only</strong> - AI permitted as a support (alt explanations, drafts critiqued) but not to generate original work.
+                    </li>
+                    <li>
+                      <strong>Three-phase</strong> - every major assignment follows AI-off → bounded AI → open AI + reflection.
+                    </li>
+                    <li>
+                      <strong>Assignment-specific</strong> - three assignment types with different AI rules (prohibited / bounded / required with documentation).
+                    </li>
+                  </ul>
+                </Help>
+              </label>
               <div className="flex flex-wrap gap-1.5">
                 {POLICY_TEMPLATES.map((t) => (
                   <button
@@ -199,6 +216,19 @@ export default function PolicyPage() {
 
           {doc && (
             <div className="border-t border-border pt-8 flex flex-col gap-8">
+              <div className="flex items-center justify-end">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setDoc(null);
+                    setError(null);
+                    window.scrollTo({ top: 0, behavior: "smooth" });
+                  }}
+                  className="text-xs text-muted hover:text-foreground rounded-full border border-border bg-surface px-3 py-1.5 hover:border-foreground transition-colors"
+                >
+                  + Start fresh
+                </button>
+              </div>
               <RevisePrompt
                 kind="policy"
                 current={doc as unknown as Record<string, unknown>}

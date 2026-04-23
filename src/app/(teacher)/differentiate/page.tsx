@@ -8,6 +8,7 @@ import { RecentList, useLibrary } from "../_components/Library";
 import { RevisePrompt } from "../_components/RevisePrompt";
 import { ExampleChips } from "../_components/ExampleChips";
 import { DIFFERENTIATION_EXAMPLES } from "@/lib/templates/builder-examples";
+import { Help } from "../../_shared/Help";
 import type { DifferentiationRequest, DifferentiationResult, LearnerProfile } from "@/lib/types";
 
 const PROFILES: { id: LearnerProfile; label: string; blurb: string }[] = [
@@ -133,8 +134,16 @@ export default function DifferentiatePage() {
 
             <div>
               <div className="flex items-baseline justify-between mb-2">
-                <span className="text-sm font-medium text-foreground">
+                <span className="text-sm font-medium text-foreground inline-flex items-center">
                   Learner profiles
+                  <Help label="About learner profiles">
+                    <p>
+                      Each profile is a Universal Design for Learning (UDL) affordance. Scaffold produces a parallel version of your source text adapted to that profile - shorter sentences, added structural cues, in-context glosses for ELL, etc.
+                    </p>
+                    <p className="mt-2">
+                      <strong>Crucial:</strong> the academic content stays the same. Only surface features change. A student who masters the adapted version has mastered the same concept.
+                    </p>
+                  </Help>
                 </span>
                 <span className="text-xs text-muted">
                   {selected.length} of 6 selected
@@ -194,6 +203,19 @@ export default function DifferentiatePage() {
 
           {result && (
             <div className="border-t border-border pt-8 flex flex-col gap-5">
+              <div className="flex items-center justify-end">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setResult(null);
+                    setError(null);
+                    window.scrollTo({ top: 0, behavior: "smooth" });
+                  }}
+                  className="text-xs text-muted hover:text-foreground rounded-full border border-border bg-surface px-3 py-1.5 hover:border-foreground transition-colors"
+                >
+                  + Start fresh
+                </button>
+              </div>
               <RevisePrompt
                 kind="differentiation"
                 current={result as unknown as Record<string, unknown>}

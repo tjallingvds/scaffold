@@ -8,6 +8,8 @@ import {
   a11yClass,
   useAccessibility,
 } from "./Accessibility";
+import { SpeakButton } from "./SpeakButton";
+import { Help } from "../../_shared/Help";
 
 interface ChatTurn {
   role: "user" | "assistant";
@@ -219,31 +221,26 @@ export function StudentWorkspace({
     setChat(nextChat);
     setPendingMessage("");
 
-    // Inject the student's current draft as context so the tutor can reference
-    // what they've written. First message only (keeps later turns cleaner).
-    const messagesForAPI: ChatTurn[] =
-      nextChat.length === 1 && draft.trim().length > 0
-        ? [
-            {
-              role: "user",
-              content: `Here is what I'm working on right now (my draft so far):\n\n"""\n${draft.trim()}\n"""\n\nMy question: ${content}`,
-            },
-          ]
-        : nextChat;
-
-    // If the student has picked a profile, append adaptation notes so the
-    // tutor actually RESPONDS differently (shorter, simpler, more literal…).
-    const adaptedSystem = a11y.profile
-      ? `${plan.student_system_prompt}\n\n${TUTOR_ADAPTATIONS[a11y.profile]}`
-      : plan.student_system_prompt;
+    // Build the system prompt on every turn so the tutor always sees:
+    // (a) the base Socratic rules, (b) any accessibility adaptation, and
+    // (c) the CURRENT draft (not a stale one from when chat began).
+    const base = plan.student_system_prompt;
+    const adaptation = a11y.profile ? TUTOR_ADAPTATIONS[a11y.profile] : "";
+    const currentDraft = draft.trim();
+    const draftSection = currentDraft
+      ? `CURRENT STUDENT DRAFT (may have been edited since your last reply — always refer to THIS version, not what was in an earlier message):\n"""\n${currentDraft}\n"""`
+      : `The student has not written a draft yet. Your job right now is to nudge them to write something of their own, even a rough sentence, rather than asking you for ideas first.`;
+    const systemWithContext = [base, adaptation, draftSection]
+      .filter(Boolean)
+      .join("\n\n");
 
     try {
       const res = await fetch("/api/chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          system: adaptedSystem,
-          messages: messagesForAPI,
+          system: systemWithContext,
+          messages: nextChat,
         }),
       });
       const data = await res.json();
@@ -301,8 +298,8 @@ export function StudentWorkspace({
 
   return (
     <div className={`min-h-screen bg-surface flex flex-col ${a11yClass(a11y)}`}>
-      <header className="bg-chrome text-chrome-ink px-5 lg:px-8 py-3.5 flex items-center justify-between gap-6 sticky top-0 z-10">
-          <div className="flex items-center gap-3 min-w-0 flex-1">
+      <header className="bg-chrome text-chrome-ink px-3 sm:px-5 lg:px-8 py-3 sm:py-3.5 flex items-center justify-between gap-3 sm:gap-6 sticky top-0 z-10">
+          <div className="flex items-center gap-2 sm:gap-3 min-w-0 flex-1">
             <span
               aria-hidden
               className="inline-flex h-7 w-7 items-center justify-center rounded-[10px] bg-gradient-to-br from-accent to-accent-ink text-white text-xs font-bold flex-shrink-0"
@@ -334,7 +331,7 @@ export function StudentWorkspace({
 
       <div
         data-student-grid
-        className="max-w-6xl w-full mx-auto px-6 lg:px-10 py-10 grid lg:grid-cols-[1fr_260px] gap-10 flex-1"
+        className="max-w-6xl w-full mx-auto px-4 sm:px-6 lg:px-10 py-6 sm:py-10 grid lg:grid-cols-[1fr_260px] gap-6 lg:gap-10 flex-1"
       >
         <main className="min-w-0">
           <div key={step} className="animate-[fadeIn_.25s_ease-out]">
@@ -543,8 +540,14 @@ function Welcome({ plan, onStart }: { plan: AssignmentPlan; onStart: () => void 
         <div className="text-[10px] uppercase tracking-[0.14em] text-accent font-semibold mb-1">
           Welcome
         </div>
-        <h2 className="text-3xl font-semibold tracking-tight text-foreground leading-[1.15]">
+        <h2 className="text-3xl font-semibold tracking-tight text-foreground leading-[1.15] inline-flex items-start">
           Let&rsquo;s build your thinking - in three short passes.
+          <Help label="Why three passes">
+            <p className="font-medium mb-1">Why it&rsquo;s structured this way.</p>
+            <p>
+              Research shows that when students use AI before they&rsquo;ve tried anything themselves, their own thinking gets weaker over time. So Phase 1 is yours alone. The AI only shows up after you&rsquo;ve written something of your own - and even then, it&rsquo;s built to ask questions, not hand you answers.
+            </p>
+          </Help>
         </h2>
         <p className="text-base text-muted leading-relaxed mt-3 max-w-2xl">
           About <strong className="text-foreground">{plan.time_minutes} minutes</strong>.
@@ -622,16 +625,23 @@ function TaskBanner({
   if (!step) return null;
   return (
     <div className="rounded-2xl border border-accent/25 bg-gradient-to-br from-accent-soft/70 via-surface to-surface p-5 flex flex-col gap-2">
-      <div className="flex items-center gap-2">
-        <span
-          aria-hidden
-          className="flex-shrink-0 w-7 h-7 rounded-full bg-accent text-white flex items-center justify-center text-xs font-semibold"
-        >
-          {stepNumber}
-        </span>
-        <div className="text-[10px] uppercase tracking-[0.14em] text-accent font-semibold">
-          Your task · {badge} · {step.time_minutes} min
+      <div className="flex items-center justify-between gap-2">
+        <div className="flex items-center gap-2">
+          <span
+            aria-hidden
+            className="flex-shrink-0 w-7 h-7 rounded-full bg-accent text-white flex items-center justify-center text-xs font-semibold"
+          >
+            {stepNumber}
+          </span>
+          <div className="text-[10px] uppercase tracking-[0.14em] text-accent font-semibold">
+            Your task · {badge} · {step.time_minutes} min
+          </div>
         </div>
+        <SpeakButton
+          text={`${step.title}. ${step.instructions}${
+            step.deliverable ? ` What you'll turn in: ${step.deliverable}` : ""
+          }`}
+        />
       </div>
       <h2 className="text-lg font-semibold tracking-tight text-foreground">
         {step.title}
@@ -689,8 +699,13 @@ function Phase1({
 
       <div className="rounded-xl border border-border bg-surface p-5">
         <div className="flex items-baseline justify-between mb-1">
-          <h3 className="text-base font-semibold text-foreground">
+          <h3 className="text-base font-semibold text-foreground inline-flex items-center">
             Take three short passes at it
+            <Help label="Why these three questions">
+              <p>
+                Writing down what you <em>already know</em>, what&rsquo;s <em>confusing</em>, and what you&rsquo;ve <em>tried</em> before looking anything up is called metacognition. It makes you aware of what you actually do and don&rsquo;t understand, so when the AI tutor shows up, you can push it toward the gaps instead of just receiving an answer.
+              </p>
+            </Help>
           </h3>
           <span className="text-[10px] uppercase tracking-wider bg-subtle text-muted px-2 py-0.5 rounded">
             Your thinking
@@ -856,8 +871,13 @@ function Phase2({
       {/* The REAL work surface - student writes their actual answer here */}
       <div className="rounded-xl border border-border bg-surface p-5">
         <div className="flex items-baseline justify-between mb-2">
-          <h3 className="text-base font-semibold tracking-tight text-foreground">
+          <h3 className="text-base font-semibold tracking-tight text-foreground inline-flex items-center">
             Your draft
+            <Help label="About your draft">
+              <p>
+                This is the actual thing you turn in - <em>your own words</em>. Keep the AI tutor out of this box; don&rsquo;t paste AI text into it. Write what you&rsquo;d say if you had to defend the idea in class, then use the tutor below to poke holes in what you wrote.
+              </p>
+            </Help>
           </h3>
           <span className="text-[10px] uppercase tracking-wider bg-subtle text-muted px-2 py-0.5 rounded">
             This is what you turn in
@@ -888,7 +908,25 @@ function Phase2({
           <div className="flex items-center gap-3">
             <AIAvatar />
             <div className="min-w-0">
-              <div className="text-sm font-semibold text-foreground">AI tutor</div>
+              <div className="text-sm font-semibold text-foreground inline-flex items-center">
+                AI tutor
+                <Help label="About the tutor">
+                  <p className="mb-2">
+                    This tutor is different from regular ChatGPT. Two rules it follows:
+                  </p>
+                  <ul className="list-disc pl-4 flex flex-col gap-1">
+                    <li>
+                      <strong>Facts &amp; definitions:</strong> it answers normally (short and to the point).
+                    </li>
+                    <li>
+                      <strong>&ldquo;Tell me the answer&rdquo; questions:</strong> it refuses and asks you a question back instead.
+                    </li>
+                  </ul>
+                  <p className="mt-2">
+                    If you keep asking it to do the thinking, it will call that out. It sees your current draft, so asking &ldquo;what&rsquo;s wrong with this?&rdquo; works.
+                  </p>
+                </Help>
+              </div>
               <div className="text-xs text-muted leading-tight">
                 Ask about your draft. It pushes back, it doesn&rsquo;t write for you.
               </div>

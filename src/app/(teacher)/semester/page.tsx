@@ -173,6 +173,19 @@ export default function SemesterPage() {
 
           {plan && (
             <div className="border-t border-border pt-8 flex flex-col gap-6">
+              <div className="flex items-center justify-end">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setPlan(null);
+                    setError(null);
+                    window.scrollTo({ top: 0, behavior: "smooth" });
+                  }}
+                  className="text-xs text-muted hover:text-foreground rounded-full border border-border bg-surface px-3 py-1.5 hover:border-foreground transition-colors"
+                >
+                  + Start fresh
+                </button>
+              </div>
               <RevisePrompt
                 kind="semester"
                 current={plan as unknown as Record<string, unknown>}

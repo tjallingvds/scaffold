@@ -51,14 +51,22 @@ export function RevisePrompt<T extends Record<string, unknown>>({
   }
 
   return (
-    <section className="rounded-2xl border border-border bg-subtle p-4 flex flex-col gap-3">
-      <div>
-        <div className="text-[10px] uppercase tracking-[0.14em] text-muted font-semibold">
-          Ask to revise
+    <section className="rounded-2xl border-2 border-dashed border-foreground/15 bg-surface p-5 flex flex-col gap-3">
+      <div className="flex items-center gap-2">
+        <span
+          aria-hidden
+          className="inline-flex h-7 w-7 items-center justify-center rounded-full bg-foreground text-surface text-xs font-semibold"
+        >
+          ↻
+        </span>
+        <div>
+          <div className="text-sm font-semibold text-foreground leading-tight">
+            Ask the AI to edit this
+          </div>
+          <p className="text-xs text-muted leading-tight mt-0.5">
+            Targeted change. The rest stays the same.
+          </p>
         </div>
-        <p className="text-xs text-muted mt-0.5">
-          Tell the AI what to change. The rest stays the same.
-        </p>
       </div>
 
       {quickActions && quickActions.length > 0 && (
@@ -69,7 +77,7 @@ export function RevisePrompt<T extends Record<string, unknown>>({
               type="button"
               onClick={() => run(a)}
               disabled={busy}
-              className="text-xs rounded-full border border-border bg-surface text-foreground px-3 py-1.5 hover:border-foreground transition-colors disabled:opacity-50"
+              className="text-xs rounded-full border border-border bg-subtle text-foreground px-3 py-1.5 hover:border-foreground hover:bg-surface transition-colors disabled:opacity-50"
             >
               {a}
             </button>

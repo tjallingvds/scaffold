@@ -9,6 +9,7 @@ import { WarningsPanel } from "../_components/WarningsPanel";
 import { StepsRail, type StepItem } from "../_components/StepsRail";
 import { RecentList, useLibrary } from "../_components/Library";
 import { RevisePrompt } from "../_components/RevisePrompt";
+import { Help } from "../../_shared/Help";
 import { ASSIGNMENT_TEMPLATES } from "@/lib/templates/assignments";
 import { ASSIGNMENT_EXAMPLES } from "@/lib/templates/assignment-examples";
 import type { AssignmentPlan, AssignmentRequest, AssignmentTemplate } from "@/lib/types";
@@ -241,7 +242,31 @@ function AssignmentPageInner() {
             </div>
 
             <div className="grid grid-cols-2 gap-4">
-              <Field label="Template">
+              <Field
+                label="Template"
+                help={
+                  <Help label="About templates">
+                    <p className="font-medium mb-1">Five assignment templates.</p>
+                    <ul className="list-disc pl-4 flex flex-col gap-1">
+                      <li>
+                        <strong>Compare & Critique</strong> - student drafts, compares with AI, writes a final position.
+                      </li>
+                      <li>
+                        <strong>AI as Feedback Tool</strong> - AI critiques a student draft; student decides what to take.
+                      </li>
+                      <li>
+                        <strong>Multi-Perspective</strong> - student commits, AI surfaces alternative readings.
+                      </li>
+                      <li>
+                        <strong>Break the AI</strong> - student probes AI for errors or bias on a topic.
+                      </li>
+                      <li>
+                        <strong>Scaffolded Exploration</strong> - student owns the research question; AI only maps terrain.
+                      </li>
+                    </ul>
+                  </Help>
+                }
+              >
                 <Select
                   value={template}
                   onChange={(e) => setTemplate(e.target.value as AssignmentTemplate)}
@@ -308,6 +333,20 @@ function AssignmentPageInner() {
 
           {plan && (
             <div className="border-t border-border pt-8 flex flex-col gap-8">
+              <div className="flex items-center justify-end">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setPlan(null);
+                    setCurrentEntryId(null);
+                    setError(null);
+                    window.scrollTo({ top: 0, behavior: "smooth" });
+                  }}
+                  className="text-xs text-muted hover:text-foreground rounded-full border border-border bg-surface px-3 py-1.5 hover:border-foreground transition-colors"
+                >
+                  + Start fresh
+                </button>
+              </div>
               <AssignmentResult
                 plan={plan}
                 onShareCreated={(shareId) => {
@@ -409,8 +448,14 @@ function AssignmentResult({
       </section>
 
       <section>
-        <h3 className="text-sm font-semibold text-foreground mb-3">
+        <h3 className="text-sm font-semibold text-foreground mb-3 inline-flex items-center">
           What you&rsquo;re grading
+          <Help label="About SHAPR">
+            <p className="font-medium mb-1">SHAPR rubric.</p>
+            <p>
+              A process-based rubric: Structure, Hypothesis, AI-Assistance, Peer-Review, Reflection. It grades the cognitive work the student did, not the polish of the final text. A student can generate polished writing with AI; faking a genuine record of thinking (initial attempts, substantive revisions, honest reflection) is much harder.
+            </p>
+          </Help>
         </h3>
         <div className="overflow-x-auto rounded-2xl border border-border bg-surface">
           <table className="min-w-full text-sm">

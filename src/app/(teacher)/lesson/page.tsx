@@ -11,6 +11,7 @@ import { RecentList, useLibrary } from "../_components/Library";
 import { RevisePrompt } from "../_components/RevisePrompt";
 import { ExampleChips } from "../_components/ExampleChips";
 import { LESSON_EXAMPLES } from "@/lib/templates/builder-examples";
+import { Help } from "../../_shared/Help";
 import type { AssignmentPlan, LessonPlan, LessonRequest } from "@/lib/types";
 
 interface LessonLibraryPayload {
@@ -191,7 +192,26 @@ export default function LessonPage() {
                   onChange={(e) => setTime(Number(e.target.value))}
                 />
               </Field>
-              <Field label="Scope">
+              <Field
+                label="Scope"
+                help={
+                  <Help label="About the three phases">
+                    <p className="font-medium mb-1">The three-phase cycle.</p>
+                    <ul className="list-disc pl-4 flex flex-col gap-1">
+                      <li>
+                        <strong>Pre-Engagement</strong> - AI off. Students write their initial attempt and surface what they already know and where they&rsquo;re confused.
+                      </li>
+                      <li>
+                        <strong>Guided Engagement</strong> - bounded AI. Students use AI to challenge or sharpen their attempt with a specific prompt template.
+                      </li>
+                      <li>
+                        <strong>Reflective Engagement</strong> - open AI. Students integrate and reflect, deciding what the AI helped with and what they&rsquo;re still uncertain about.
+                      </li>
+                    </ul>
+                    <p className="mt-2">Picking only one phase generates just that segment.</p>
+                  </Help>
+                }
+              >
                 <select
                   value={scope}
                   onChange={(e) => setScope(e.target.value as LessonRequest["scope"])}
@@ -238,6 +258,19 @@ export default function LessonPage() {
 
           {plan && (
             <div className="border-t border-border pt-6 flex flex-col gap-6">
+              <div className="flex items-center justify-end">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setPlan(null);
+                    setError(null);
+                    window.scrollTo({ top: 0, behavior: "smooth" });
+                  }}
+                  className="text-xs text-muted hover:text-foreground rounded-full border border-border bg-surface px-3 py-1.5 hover:border-foreground transition-colors"
+                >
+                  + Start fresh
+                </button>
+              </div>
               <ShareLessonCard
                 lesson={plan}
                 concept={concept}

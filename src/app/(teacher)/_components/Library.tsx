@@ -33,6 +33,10 @@ function readAll(): LibraryEntry[] {
   }
 }
 
+export function readAllEntries(): LibraryEntry[] {
+  return readAll();
+}
+
 function writeAll(entries: LibraryEntry[]) {
   if (typeof window === "undefined") return;
   try {

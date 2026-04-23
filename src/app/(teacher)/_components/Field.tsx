@@ -5,15 +5,20 @@ import { ReactNode } from "react";
 export function Field({
   label,
   hint,
+  help,
   children,
 }: {
   label: string;
   hint?: string;
+  help?: ReactNode;
   children: ReactNode;
 }) {
   return (
     <label className="flex flex-col gap-1.5">
-      <span className="text-sm font-medium text-foreground">{label}</span>
+      <span className="text-sm font-medium text-foreground inline-flex items-center">
+        {label}
+        {help}
+      </span>
       {hint && <span className="text-xs text-muted">{hint}</span>}
       {children}
     </label>
