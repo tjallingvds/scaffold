@@ -1,26 +1,188 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* Page canvas - plain white, fullscreen */
+  --page: #ffffff;
+
+  /* Surfaces */
+  --background: #fafbfc;
+  --surface: #ffffff;
+  --subtle: #f4f5f8;
+
+  --foreground: #14161d;
+  --muted: #6a7180;
+  --border: #e3e7f0;
+  --border-strong: #cfd5e3;
+
+  /* Accents - playful */
+  --accent: #5b5cff;        /* indigo-ish primary */
+  --accent-soft: #e7e8ff;
+  --accent-ink: #3538c0;
+
+  --mint: #b7f0c7;
+  --mint-ink: #187a3a;
+  --mint-soft: #e4fbea;
+
+  --peach: #ffccc6;
+  --peach-ink: #a23b2f;
+  --peach-soft: #ffe6e3;
+
+  --lilac: #e1d7ff;
+  --lilac-ink: #573ec0;
+  --lilac-soft: #f1ecff;
+
+  --butter: #fff1bf;
+  --butter-ink: #8d6a00;
+  --butter-soft: #fff8dc;
+
+  --warn: #a1560b;
+  --warn-soft: #fbe9cf;
+  --error: #a3201a;
+  --error-soft: #fde5e1;
+  --info: #1e3a8a;
+  --info-soft: #e1e8ff;
+
+  /* Dark chrome used for top header */
+  --chrome: #111219;
+  --chrome-soft: #1c1d27;
+  --chrome-ink: #f6f7fb;
+  --chrome-muted: #9aa0b4;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+  --color-surface: var(--surface);
+  --color-subtle: var(--subtle);
+  --color-border: var(--border);
+  --color-border-strong: var(--border-strong);
+  --color-muted: var(--muted);
+  --color-accent: var(--accent);
+  --color-accent-soft: var(--accent-soft);
+  --color-accent-ink: var(--accent-ink);
+  --color-mint: var(--mint);
+  --color-mint-ink: var(--mint-ink);
+  --color-mint-soft: var(--mint-soft);
+  --color-peach: var(--peach);
+  --color-peach-ink: var(--peach-ink);
+  --color-peach-soft: var(--peach-soft);
+  --color-lilac: var(--lilac);
+  --color-lilac-ink: var(--lilac-ink);
+  --color-lilac-soft: var(--lilac-soft);
+  --color-butter: var(--butter);
+  --color-butter-ink: var(--butter-ink);
+  --color-butter-soft: var(--butter-soft);
+  --color-warn: var(--warn);
+  --color-warn-soft: var(--warn-soft);
+  --color-error: var(--error);
+  --color-error-soft: var(--error-soft);
+  --color-info: var(--info);
+  --color-info-soft: var(--info-soft);
+  --color-chrome: var(--chrome);
+  --color-chrome-soft: var(--chrome-soft);
+  --color-chrome-ink: var(--chrome-ink);
+  --color-chrome-muted: var(--chrome-muted);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+html,
+body {
+  background: var(--page);
+  color: var(--foreground);
+  font-family: var(--font-geist-sans), ui-sans-serif, system-ui, -apple-system,
+    "Segoe UI", Roboto, sans-serif;
+  font-feature-settings: "ss01", "cv11", "zero";
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+:where(input, textarea, select, button, a):focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px color-mix(in oklab, var(--accent) 25%, transparent);
+  border-color: var(--accent);
+}
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--border-strong) transparent;
+}
+
+::selection {
+  background: color-mix(in oklab, var(--accent) 30%, transparent);
+  color: var(--accent-ink);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+/* ---- Student-side accessibility opt-ins ----
+   Applied to <html> so Tailwind's rem-based sizes scale with the root font-size.
+*/
+html.a11y-text-large {
+  font-size: 18px;
 }
+html.a11y-text-xlarge {
+  font-size: 20px;
+}
+
+html.a11y-dyslexia body,
+html.a11y-dyslexia body * {
+  letter-spacing: 0.035em;
+  word-spacing: 0.08em;
+  font-family: Verdana, Tahoma, sans-serif !important;
+}
+
+html.a11y-no-motion body *,
+html.a11y-no-motion body *::before,
+html.a11y-no-motion body *::after {
+  animation-duration: 0.01ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.01ms !important;
+  scroll-behavior: auto !important;
+}
+
+html.a11y-contrast {
+  --foreground: #000000;
+  --muted: #3d4454;
+  --border: #9aa0b4;
+  --border-strong: #57607a;
+  --surface: #ffffff;
+}
+
+html.a11y-line-relaxed body,
+html.a11y-line-relaxed body * {
+  line-height: 1.7 !important;
+}
+html.a11y-line-loose body,
+html.a11y-line-loose body * {
+  line-height: 1.95 !important;
+}
+
+/* Focus mode: hide the side rail so only the current task is visible */
+html.a11y-focus body aside[data-role="student-rail"] {
+  display: none !important;
+}
+html.a11y-focus body [data-student-grid] {
+  grid-template-columns: 1fr !important;
+  max-width: 48rem !important;
+}
+
+/* Chunked text: extra paragraph spacing for easier reading */
+html.a11y-chunked body p,
+html.a11y-chunked body li {
+  margin-bottom: 0.85rem;
+}
+html.a11y-chunked body p + p,
+html.a11y-chunked body ul > li + li,
+html.a11y-chunked body ol > li + li {
+  margin-top: 0.5rem;
+}
+

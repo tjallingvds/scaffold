@@ -1,36 +1,98 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Scaffold
 
-## Getting Started
+A lesson and assignment planner for AI-augmented inclusive education, built on the Scaffolded Mind framework.
 
-First, run the development server:
+Two sides in one app:
+- **Teacher** (authenticated) — builds lessons, assignments, differentiations, policies, semester plans.
+- **Student** (anonymous, link-based) — walks through the three-phase cycle with a bounded Socratic tutor. No student data stored.
+
+## Running locally
 
 ```bash
+# 1. Install
+npm install
+
+# 2. Spin up Postgres (needs Docker)
+docker compose up -d
+# ...or point DATABASE_URL at your own Postgres instead.
+
+# 3. Copy env
+cp .env.local.example .env.local
+
+# 4. Fill in:
+#    DEEPSEEK_API_KEY   — from https://platform.deepseek.com/
+#    AUTH_SECRET        — openssl rand -base64 32
+#    DATABASE_URL       — default matches docker compose:
+#                         postgres://scaffold:scaffold@localhost:5432/scaffold
+
+# 5. Create tables
+npm run db:push
+
+# 6. Dev
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+# open http://localhost:3000
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Sign up at `/signup`, then use the teacher side. Shared assignment links live at `/student/<id>` and require no student account.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Deploying to Railway
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+1. **Create a new Railway project**, add a **Postgres** plugin.
+2. Add a **service** from this GitHub repo. Railway's Nixpacks builder uses `railway.json` automatically.
+3. Set these env vars on the service:
 
-## Learn More
+   | Variable            | Value                                                  |
+   | ------------------- | ------------------------------------------------------ |
+   | `DEEPSEEK_API_KEY`  | your DeepSeek key                                      |
+   | `DEEPSEEK_MODEL`    | `deepseek-chat` (default)                              |
+   | `DATABASE_URL`      | `${{ Postgres.DATABASE_URL }}` (Railway reference)     |
+   | `AUTH_SECRET`       | `openssl rand -base64 32`                              |
+   | `NEXTAUTH_URL`      | `https://<your-service>.up.railway.app`                |
+   | `AUTH_TRUST_HOST`   | `true`                                                 |
 
-To learn more about Next.js, take a look at the following resources:
+4. **Apply the schema** once — from your machine:
+   ```bash
+   DATABASE_URL="<railway public url>" npm run db:push
+   ```
+   (Or run it in Railway's web shell.)
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+5. Deploy. Sign up at `https://<your-service>.up.railway.app/signup`.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Architecture
 
-## Deploy on Vercel
+- **Next.js 16** (App Router, Turbopack) + TypeScript + Tailwind v4.
+- **Postgres** via Drizzle ORM. Tables: `users`, `lessons`, `assignments`, `shares`.
+- **Auth.js v5** (NextAuth) — credentials provider, bcrypt-hashed passwords, JWT sessions.
+- **LLM**: DeepSeek via the OpenAI-compatible chat completions API.
+- **No student data**: the `shares` table stores only the assignment plan snapshot; students interact with the app anonymously via a share link.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## The five principles
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+1. AI as Scaffold, not Substitute.
+2. Protect Desirable Difficulty.
+3. Delay Automation.
+4. Preserve Epistemic Agency.
+5. Design for Cognitive Variability.
+
+## Routes
+
+### Teacher (protected)
+
+| Route             | What it does                                              |
+| ----------------- | --------------------------------------------------------- |
+| `/`               | Dashboard                                                 |
+| `/lesson`         | Three-phase lesson builder                                |
+| `/assignment`     | Five assignment templates, SHAPR rubric, Socratic prompt  |
+| `/differentiate`  | UDL-aligned variants of existing material                 |
+| `/prompts`        | Curated UDL prompt library                                |
+| `/policy`         | Classroom AI policy writer                                |
+| `/semester`       | Semester plan                                             |
+| `/settings`       | Local prefs + privacy summary                             |
+
+### Public
+
+| Route             | What it does                                              |
+| ----------------- | --------------------------------------------------------- |
+| `/login`          | Sign in                                                   |
+| `/signup`         | Create teacher account                                    |
+| `/student/[id]`   | Student walk-through: three phases + Socratic tutor       |
