@@ -37,26 +37,18 @@ Sign up at `/signup`, then use the teacher side. Shared assignment links live at
 
 ## Deploying to Railway
 
-1. **Create a new Railway project**, add a **Postgres** plugin.
-2. Add a **service** from this GitHub repo. Railway's Nixpacks builder uses `railway.json` automatically.
-3. Set these env vars on the service:
+Simplest path — no auth, no database needed. Shares live in memory.
 
-   | Variable            | Value                                                  |
-   | ------------------- | ------------------------------------------------------ |
-   | `DEEPSEEK_API_KEY`  | your DeepSeek key                                      |
-   | `DEEPSEEK_MODEL`    | `deepseek-chat` (default)                              |
-   | `DATABASE_URL`      | `${{ Postgres.DATABASE_URL }}` (Railway reference)     |
-   | `AUTH_SECRET`       | `openssl rand -base64 32`                              |
-   | `NEXTAUTH_URL`      | `https://<your-service>.up.railway.app`                |
-   | `AUTH_TRUST_HOST`   | `true`                                                 |
+1. Create a Railway project, add a service from this GitHub repo.
+2. Deploy. That's it.
 
-4. **Apply the schema** once — from your machine:
-   ```bash
-   DATABASE_URL="<railway public url>" npm run db:push
-   ```
-   (Or run it in Railway's web shell.)
+A baked-in DeepSeek key ships with the repo for demo use, and the share store automatically falls back to an in-memory map. Teachers use the app without signing in.
 
-5. Deploy. Sign up at `https://<your-service>.up.railway.app/signup`.
+Optional upgrades:
+
+- **Override the DeepSeek key.** Set `DEEPSEEK_API_KEY` to your own key.
+- **Persist share links across restarts.** Add the Postgres plugin and set `DATABASE_URL=${{ Postgres.DATABASE_URL }}`, then apply the schema: `DATABASE_URL="<railway url>" npm run db:push`. The app will use the DB automatically when present and fall back to memory if the write fails.
+- **Re-enable auth.** Set `ENABLE_AUTH=true` plus `AUTH_SECRET` and `NEXTAUTH_URL`. Teacher routes will be gated behind `/login`.
 
 ## Architecture
 

@@ -1,6 +1,9 @@
 import { NextResponse, type NextRequest } from "next/server";
-import { getToken } from "next-auth/jwt";
-import { isDemoMode } from "@/lib/mode";
+
+// Auth is disabled by default. The whole app is open; only a few paths exist
+// just so the routing doesn't try to match them against auth middleware.
+// (Set ENABLE_AUTH=true and configure AUTH_SECRET to re-enable.)
+const AUTH_ENABLED = process.env.ENABLE_AUTH === "true";
 
 const PUBLIC_PREFIXES = [
   "/login",
@@ -20,12 +23,12 @@ function isPublic(pathname: string): boolean {
 }
 
 export async function proxy(request: NextRequest) {
+  if (!AUTH_ENABLED) return NextResponse.next();
   const { pathname } = request.nextUrl;
   if (isPublic(pathname)) return NextResponse.next();
 
-  // Demo mode: no DB, no auth. Everything open.
-  if (isDemoMode()) return NextResponse.next();
-
+  // Lazy import so edge bundle stays small when auth is off.
+  const { getToken } = await import("next-auth/jwt");
   const token = await getToken({
     req: request,
     secret: process.env.AUTH_SECRET,
