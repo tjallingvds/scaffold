@@ -22,10 +22,7 @@ function canUseDb(): boolean {
   return !!process.env.DATABASE_URL;
 }
 
-export async function saveShared(
-  plan: AssignmentPlan,
-  createdBy?: string | null
-): Promise<string> {
+export async function saveShared(plan: AssignmentPlan): Promise<string> {
   if (canUseDb()) {
     try {
       const { db } = await import("@/db");
@@ -36,9 +33,7 @@ export async function saveShared(
           await db.insert(shares).values({
             id,
             plan: plan as unknown as object,
-            createdBy: createdBy ?? null,
           });
-          // Mirror to memStore so reads during the same process are instant.
           memStore.set(id, plan);
           return id;
         } catch (err) {
@@ -48,8 +43,6 @@ export async function saveShared(
       }
       throw new Error("Could not allocate a unique share id");
     } catch (err) {
-      // DB misconfigured or schema not applied — fall back to memory so the
-      // share link still works for this session.
       console.warn("[share-store] DB write failed, falling back to memory:", err);
     }
   }

@@ -26,28 +26,29 @@ export const SAMPLE_ASSIGNMENT: AssignmentPlan = {
       number: 2,
       phase: "guided_engagement",
       ai_role: "bounded",
-      title: "Test your reading against other perspectives",
+      title: "Draft your reading and let the tutor push back",
       instructions:
-        "Use the AI tutor to surface interpretations you might not have considered - from a critic who reads Gatsby as tragic, one who reads him as morally compromised, and one who locates the tragedy in American society rather than in the man. You have three exchanges. Use them to challenge your own view, not to replace it.",
+        "Write your actual interpretation in the draft box - the position you'd defend in class, grounded in specific moments from the novel. Then ask the tutor to challenge it. Good things to ask for: a critic who would read Gatsby as morally compromised rather than tragic, a reading that locates the tragedy in American society rather than the man, or the strongest counter to your own thesis. The tutor will not write for you - its job is to push on what you've put in your draft.",
       time_minutes: 25,
       deliverable:
-        "The verbatim log of the conversation, plus a note on which perspective most surprised you.",
+        "Your draft + the log of the conversation with the tutor (both saved automatically).",
     },
     {
       number: 3,
       phase: "reflective_engagement",
       ai_role: "open",
-      title: "Synthesise and revise",
+      title: "Reflect honestly",
       instructions:
-        "Write a refined position that either sharpens, complicates, or revises your first attempt. Cite at least one moment in the novel. Be honest about what genuinely changed in your thinking and what did not.",
+        "Scaffold will ask you three short questions: what changed in your thinking, which tutor suggestions you accepted or rejected and why, and what you're still uncertain about. Honest beats polished. Cite at least one moment in the novel in one of your answers.",
       time_minutes: 20,
-      deliverable: "A 250–400 word final position with reflection.",
+      deliverable: "Your three reflection answers (saved automatically).",
     },
   ],
   required_artifacts: [
-    "Initial unassisted interpretation",
-    "Verbatim AI interaction log",
-    "Refined position + written reflection",
+    "Initial unassisted attempt (Phase 1)",
+    "Draft (Phase 2, written by the student)",
+    "AI tutor log (Phase 2, auto-captured)",
+    "Reflection (Phase 3)",
   ],
   shapr_rubric: [
     {
@@ -68,10 +69,10 @@ export const SAMPLE_ASSIGNMENT: AssignmentPlan = {
     },
     {
       dimension: "AI-Assistance",
-      focus: "Prompts are specific and the three-exchange cap is respected.",
+      focus: "Prompts are purposeful; the tutor is pushing back on the student's draft, not writing for them.",
       high_proficiency:
-        "Prompts seek perspectives the student had not yet considered; cap respected.",
-      low_proficiency: "Prompts ask the AI to write the answer; cap exceeded.",
+        "Prompts seek perspectives the student had not yet considered; draft is clearly the student's own words.",
+      low_proficiency: "Prompts ask the tutor to write the answer; draft mirrors the tutor's phrasing.",
       weight_percent: 20,
     },
     {

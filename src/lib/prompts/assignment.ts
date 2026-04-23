@@ -68,9 +68,18 @@ Output format: return a JSON object:
   "framework_warnings": [{ "severity": "info" | "warning" | "error", "message": string }]
 }
 
+IMPORTANT — where students will do this assignment:
+Students will walk through this assignment inside Scaffold's student workspace (not ChatGPT, not a Google Doc). That workspace already provides:
+- Phase 1: three metacognitive prompts ("What I know", "What's confusing", "What I've tried"). The pre-engagement instructions you write should describe the TASK students are writing about in Phase 1 — not ask them to open a separate tool.
+- Phase 2: a "Your draft" textarea (where they write their actual answer) + a built-in AI tutor they chat with inside the page. The tutor automatically receives their draft as context. The chat log is automatically preserved and submitted. The tutor is governed by the student_system_prompt you also generate, so it already refuses to do their thinking. Your Phase 2 instructions should tell students WHAT to draft and HOW to use the tutor — never "prompt ChatGPT with the following text" and never "copy and paste the AI's response into your document". There is no document; there is a draft textarea.
+- Phase 3: three reflection prompts that are asked by the UI. Your Phase 3 instructions should describe what the student should be reflecting ON.
+
+Write instructions that fit Scaffold's workflow. Never instruct students to open ChatGPT, paste prompts, or copy verbatim AI output into their work — doing so violates the framework (students would be pasting AI text into their draft). The tutor is always the one pushing back on the draft the student writes in their own words.
+
 Rules:
 - Step 1 MUST always be pre_engagement with ai_role "none" for any template that uses AI.
+- Step 2 instructions must describe (a) what to write in the draft, (b) what to ask the tutor to push back on — NOT a literal prompt to paste into an external AI.
 - shapr_rubric weights must sum to 100.
-- student_system_prompt must be self-contained copy-paste text, written in second person ("You are a tutor..."), topic-specific, and include explicit refusal behavior.
-- required_artifacts must list each deliverable students must submit as separate items (e.g. "Initial unassisted attempt", "Verbatim AI interaction log", "Final revision", "Reflection paragraph").
+- student_system_prompt must be self-contained text (starting "You are a tutor..."), topic-specific, and include explicit refusal behavior. This is what governs Scaffold's in-page tutor.
+- required_artifacts should reflect what Scaffold auto-collects: "Initial unassisted attempt (Phase 1)", "Draft (Phase 2)", "AI tutor log (Phase 2, auto-captured)", "Reflection (Phase 3)". Students don't have to gather these manually.
 - Return ONLY valid JSON.`;

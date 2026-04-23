@@ -14,6 +14,6 @@ export async function POST(request: NextRequest) {
   if (!body?.plan || typeof body.plan !== "object") {
     return Response.json({ error: "Missing plan" }, { status: 400 });
   }
-  const id = await saveShared(body.plan, null);
+  const id = await saveShared(body.plan);
   return Response.json({ id });
 }
