@@ -4,6 +4,7 @@ import { useRef, useState } from "react";
 import { Button, PageFrame } from "../_components/PageFrame";
 import { Field, TextArea, TextInput } from "../_components/Field";
 import { PIINotice } from "../_components/PIINotice";
+import { RecentList, useLibrary } from "../_components/Library";
 import type { DifferentiationRequest, DifferentiationResult, LearnerProfile } from "@/lib/types";
 
 const PROFILES: { id: LearnerProfile; label: string; blurb: string }[] = [
@@ -29,6 +30,7 @@ export default function DifferentiatePage() {
   const [error, setError] = useState<string | null>(null);
 
   const resultRef = useRef<HTMLDivElement>(null);
+  const library = useLibrary("differentiation");
 
   function toggle(id: LearnerProfile) {
     setSelected((s) =>
@@ -60,7 +62,11 @@ export default function DifferentiatePage() {
         setError(data.error || `Request failed (${res.status})`);
         return;
       }
-      setResult(data.result as DifferentiationResult);
+      const next = data.result as DifferentiationResult;
+      setResult(next);
+      const title =
+        source.trim().slice(0, 60).replace(/\s+/g, " ") || "Differentiation";
+      library.save(title, { request: body, result: next });
       setTimeout(
         () => resultRef.current?.scrollIntoView({ behavior: "smooth", block: "start" }),
         80
@@ -76,6 +82,30 @@ export default function DifferentiatePage() {
     <PageFrame title="Differentiate a reading">
       <div className="h-full overflow-y-auto bg-surface">
         <div className="max-w-3xl mx-auto px-6 lg:px-10 py-8 flex flex-col gap-8">
+          {library.entries.length > 0 && !result && (
+            <RecentList
+              entries={library.entries}
+              onPick={(entry) => {
+                const d = entry.data as {
+                  request: DifferentiationRequest;
+                  result: DifferentiationResult;
+                };
+                setSource(d.request.source_text);
+                setSelected(d.request.profiles);
+                setCulturalCtx(d.request.cultural_context ?? "");
+                setResult(d.result);
+                setTimeout(
+                  () =>
+                    resultRef.current?.scrollIntoView({
+                      behavior: "smooth",
+                      block: "start",
+                    }),
+                  80,
+                );
+              }}
+              onRemove={library.remove}
+            />
+          )}
           <form onSubmit={submit} className="flex flex-col gap-6">
             <Field
               label="Source material"

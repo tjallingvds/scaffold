@@ -2,7 +2,12 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import type { AssignmentPlan, AssignmentStep } from "@/lib/types";
-import { AccessibilityMenu, a11yClass, useAccessibility } from "./Accessibility";
+import {
+  AccessibilityMenu,
+  TUTOR_ADAPTATIONS,
+  a11yClass,
+  useAccessibility,
+} from "./Accessibility";
 
 interface ChatTurn {
   role: "user" | "assistant";
@@ -55,6 +60,33 @@ function findStep(plan: AssignmentPlan, phase: AssignmentStep["phase"]): Assignm
   return plan.student_steps.find((s) => s.phase === phase);
 }
 
+interface Saved {
+  step: Step;
+  known: string;
+  confused: string;
+  tried: string;
+  draft: string;
+  chat: ChatTurn[];
+  reflection1: string;
+  reflection2: string;
+  reflection3: string;
+}
+
+function storageKey(shareId: string): string {
+  return `scaffold.student.${shareId}`;
+}
+
+function readSaved(shareId: string): Partial<Saved> {
+  if (typeof window === "undefined") return {};
+  try {
+    const raw = localStorage.getItem(storageKey(shareId));
+    if (!raw) return {};
+    return JSON.parse(raw) as Partial<Saved>;
+  } catch {
+    return {};
+  }
+}
+
 export function StudentWorkspace({
   plan,
   shareId,
@@ -63,29 +95,67 @@ export function StudentWorkspace({
   shareId: string;
 }) {
   const { prefs: a11y, setPrefs: setA11y } = useAccessibility();
-  const [step, setStep] = useState<Step>("welcome");
+
+  // Initial state is read from localStorage synchronously so we never re-hydrate
+  // via setState-in-effect (which React 19 flags).
+  const saved = useMemo(() => readSaved(shareId), [shareId]);
+
+  const [step, setStep] = useState<Step>(saved.step ?? "welcome");
 
   // Phase 1
-  const [known, setKnown] = useState("");
-  const [confused, setConfused] = useState("");
-  const [tried, setTried] = useState("");
+  const [known, setKnown] = useState(saved.known ?? "");
+  const [confused, setConfused] = useState(saved.confused ?? "");
+  const [tried, setTried] = useState(saved.tried ?? "");
 
   // Effort check
   const [checkBusy, setCheckBusy] = useState(false);
   const [checkResult, setCheckResult] = useState<EffortCheck | null>(null);
 
   // Phase 2 - the real answer the student is writing + the tutor chat beside it
-  const [draft, setDraft] = useState("");
-  const [chat, setChat] = useState<ChatTurn[]>([]);
+  const [draft, setDraft] = useState(saved.draft ?? "");
+  const [chat, setChat] = useState<ChatTurn[]>(saved.chat ?? []);
   const [pendingMessage, setPendingMessage] = useState("");
   const [isSending, setIsSending] = useState(false);
   const [chatError, setChatError] = useState<string | null>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
 
   // Phase 3
-  const [reflection1, setReflection1] = useState("");
-  const [reflection2, setReflection2] = useState("");
-  const [reflection3, setReflection3] = useState("");
+  const [reflection1, setReflection1] = useState(saved.reflection1 ?? "");
+  const [reflection2, setReflection2] = useState(saved.reflection2 ?? "");
+  const [reflection3, setReflection3] = useState(saved.reflection3 ?? "");
+
+  // Persist everything to localStorage on any change.
+  useEffect(() => {
+    try {
+      localStorage.setItem(
+        storageKey(shareId),
+        JSON.stringify({
+          step,
+          known,
+          confused,
+          tried,
+          draft,
+          chat,
+          reflection1,
+          reflection2,
+          reflection3,
+        }),
+      );
+    } catch {
+      /* ignore quota errors */
+    }
+  }, [
+    shareId,
+    step,
+    known,
+    confused,
+    tried,
+    draft,
+    chat,
+    reflection1,
+    reflection2,
+    reflection3,
+  ]);
 
   useEffect(() => {
     if (scrollRef.current) {
@@ -124,7 +194,11 @@ export function StudentWorkspace({
       const res = await fetch("/api/effort-check", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ topic: plan.topic, attempt: combinedAttempt }),
+        body: JSON.stringify({
+          topic: plan.topic,
+          attempt: combinedAttempt,
+          profile: a11y.profile ?? undefined,
+        }),
       });
       const data = (await res.json()) as EffortCheck;
       setCheckResult(data);
@@ -157,12 +231,18 @@ export function StudentWorkspace({
           ]
         : nextChat;
 
+    // If the student has picked a profile, append adaptation notes so the
+    // tutor actually RESPONDS differently (shorter, simpler, more literal…).
+    const adaptedSystem = a11y.profile
+      ? `${plan.student_system_prompt}\n\n${TUTOR_ADAPTATIONS[a11y.profile]}`
+      : plan.student_system_prompt;
+
     try {
       const res = await fetch("/api/chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          system: plan.student_system_prompt,
+          system: adaptedSystem,
           messages: messagesForAPI,
         }),
       });
@@ -318,6 +398,8 @@ export function StudentWorkspace({
             {step === "submit" && (
               <SubmitView
                 plan={plan}
+                shareId={shareId}
+                profile={a11y.profile}
                 known={known}
                 confused={confused}
                 tried={tried}
@@ -1040,6 +1122,8 @@ function Phase3({
 
 function SubmitView({
   plan,
+  shareId,
+  profile,
   known,
   confused,
   tried,
@@ -1053,6 +1137,8 @@ function SubmitView({
   onBack,
 }: {
   plan: AssignmentPlan;
+  shareId: string;
+  profile: string | null;
   known: string;
   confused: string;
   tried: string;
@@ -1067,6 +1153,49 @@ function SubmitView({
 }) {
   const [copied, setCopied] = useState(false);
   const [showRaw, setShowRaw] = useState(false);
+  const [submitStatus, setSubmitStatus] = useState<
+    "idle" | "sending" | "sent" | "error"
+  >("idle");
+  const [submitError, setSubmitError] = useState<string | null>(null);
+
+  async function submitToTeacher() {
+    setSubmitStatus("sending");
+    setSubmitError(null);
+    try {
+      const res = await fetch("/api/submit", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          share_id: shareId,
+          data: {
+            assignment_title: plan.title,
+            assignment_topic: plan.topic,
+            submitted_at: new Date().toISOString(),
+            phase1: { known, confused, tried },
+            draft,
+            chat,
+            exchanges_used: exchangesUsed,
+            reflection: {
+              changed: reflection1,
+              accepted_rejected: reflection2,
+              uncertain: reflection3,
+            },
+            accessibility_profile: profile,
+          },
+        }),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        setSubmitError(data.error || `HTTP ${res.status}`);
+        setSubmitStatus("error");
+        return;
+      }
+      setSubmitStatus("sent");
+    } catch (e) {
+      setSubmitError(e instanceof Error ? e.message : "Submit failed");
+      setSubmitStatus("error");
+    }
+  }
   return (
     <section className="flex flex-col gap-6">
       <div className="rounded-2xl border-2 border-accent/30 bg-gradient-to-br from-accent-soft/70 via-surface to-surface p-6">
@@ -1156,18 +1285,34 @@ function SubmitView({
           </button>
         }
         right={
-          <button
-            onClick={async () => {
-              await navigator.clipboard.writeText(compiled);
-              setCopied(true);
-              setTimeout(() => setCopied(false), 1500);
-            }}
-            className="rounded-full bg-accent text-white px-5 py-2.5 text-sm font-medium hover:bg-accent-ink transition-colors shadow-sm"
-          >
-            {copied ? "✓ Copied to clipboard" : "Copy my submission"}
-          </button>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={async () => {
+                await navigator.clipboard.writeText(compiled);
+                setCopied(true);
+                setTimeout(() => setCopied(false), 1500);
+              }}
+              className="rounded-full border border-border bg-surface text-foreground px-4 py-2.5 text-sm font-medium hover:border-foreground transition-colors"
+            >
+              {copied ? "✓ Copied" : "Copy text"}
+            </button>
+            <button
+              onClick={submitToTeacher}
+              disabled={submitStatus === "sending" || submitStatus === "sent"}
+              className="rounded-full bg-accent text-white px-5 py-2.5 text-sm font-medium hover:bg-accent-ink transition-colors shadow-sm disabled:opacity-70"
+            >
+              {submitStatus === "sending"
+                ? "Sending…"
+                : submitStatus === "sent"
+                  ? "✓ Sent to your teacher"
+                  : "Submit to your teacher"}
+            </button>
+          </div>
         }
       />
+      {submitError && (
+        <div className="text-xs text-error text-right -mt-2">{submitError}</div>
+      )}
 
       <p className="text-xs text-muted text-center mt-2">
         Assignment: <strong className="text-foreground font-medium">{plan.title}</strong>

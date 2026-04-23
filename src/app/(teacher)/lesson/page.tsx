@@ -7,7 +7,13 @@ import { PIINotice } from "../_components/PIINotice";
 import { LessonView } from "../_components/LessonView";
 import { WarningsPanel } from "../_components/WarningsPanel";
 import { StepsRail, type StepItem } from "../_components/StepsRail";
+import { RecentList, useLibrary } from "../_components/Library";
 import type { AssignmentPlan, LessonPlan, LessonRequest } from "@/lib/types";
+
+interface LessonLibraryPayload {
+  request: LessonRequest;
+  plan: LessonPlan;
+}
 
 const SCOPE_OPTIONS: { value: LessonRequest["scope"]; label: string }[] = [
   { value: "full_cycle", label: "Full three-phase cycle" },
@@ -34,6 +40,7 @@ export default function LessonPage() {
   );
 
   const resultRef = useRef<HTMLDivElement>(null);
+  const library = useLibrary("lesson");
 
   async function generate(e: React.FormEvent) {
     e.preventDefault();
@@ -59,7 +66,12 @@ export default function LessonPage() {
         setError(data.error || `Request failed (${res.status})`);
         return;
       }
-      setPlan(data.plan as LessonPlan);
+      const next = data.plan as LessonPlan;
+      setPlan(next);
+      library.save(concept.trim() || "Untitled lesson", {
+        request: body,
+        plan: next,
+      } satisfies LessonLibraryPayload);
       setTimeout(
         () => resultRef.current?.scrollIntoView({ behavior: "smooth", block: "start" }),
         80
@@ -69,6 +81,22 @@ export default function LessonPage() {
     } finally {
       setIsLoading(false);
     }
+  }
+
+  function loadEntry(entry: { data: unknown }) {
+    const d = entry.data as LessonLibraryPayload;
+    setConcept(d.request.concept);
+    setSubject(d.request.subject);
+    setGradeLevel(d.request.grade_level);
+    setObjective(d.request.learning_objective);
+    setTime(d.request.time_minutes);
+    setScope(d.request.scope);
+    setConsiderations(d.request.special_considerations ?? "");
+    setPlan(d.plan);
+    setTimeout(
+      () => resultRef.current?.scrollIntoView({ behavior: "smooth", block: "start" }),
+      80,
+    );
   }
 
   const steps: StepItem[] = [
@@ -94,6 +122,13 @@ export default function LessonPage() {
       <div className="h-full overflow-y-auto bg-surface">
         <div className="max-w-6xl mx-auto px-6 lg:px-10 py-8 grid lg:grid-cols-[1fr_240px] gap-10">
           <div className="flex flex-col gap-8 min-w-0">
+          {library.entries.length > 0 && (
+            <RecentList
+              entries={library.entries}
+              onPick={loadEntry}
+              onRemove={library.remove}
+            />
+          )}
           <form onSubmit={generate} className="flex flex-col gap-6">
             <Field label="Concept">
               <TextInput
@@ -325,6 +360,7 @@ function ShareLessonCard({
   timeMinutes: number;
 }) {
   const [url, setUrl] = useState<string | null>(null);
+  const [shareId, setShareId] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
   const [err, setErr] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
@@ -344,6 +380,7 @@ function ShareLessonCard({
         setErr(data.error || `HTTP ${res.status}`);
         return;
       }
+      setShareId(data.id);
       setUrl(`${window.location.origin}/student/${data.id}`);
     } catch (e) {
       setErr(e instanceof Error ? e.message : "Share failed");
@@ -414,7 +451,7 @@ function ShareLessonCard({
           {copied ? "✓ Copied" : "Copy"}
         </button>
       </div>
-      <div className="mt-3 text-xs">
+      <div className="mt-3 text-xs flex flex-wrap items-center gap-x-3 gap-y-1">
         <a
           href={url}
           target="_blank"
@@ -423,8 +460,18 @@ function ShareLessonCard({
         >
           Preview as a student ↗
         </a>
-        <span className="text-muted ml-2">
-          See what your class will see. On Railway, this URL works on any device.
+        {shareId && (
+          <a
+            href={`/submissions/${shareId}`}
+            target="_blank"
+            rel="noreferrer"
+            className="text-foreground font-medium hover:underline"
+          >
+            View submissions ↗
+          </a>
+        )}
+        <span className="text-muted">
+          Works on any device the link is opened on.
         </span>
       </div>
     </section>

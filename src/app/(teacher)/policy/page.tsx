@@ -3,6 +3,7 @@
 import { useRef, useState } from "react";
 import { Button, PageFrame } from "../_components/PageFrame";
 import { Field, TextArea, TextInput } from "../_components/Field";
+import { RecentList, useLibrary } from "../_components/Library";
 import { POLICY_TEMPLATES } from "@/lib/templates/policies";
 import type { PolicyDocument, PolicyRequest, PolicyTemplateId } from "@/lib/types";
 
@@ -23,6 +24,7 @@ export default function PolicyPage() {
   const [copied, setCopied] = useState(false);
 
   const resultRef = useRef<HTMLDivElement>(null);
+  const library = useLibrary("policy");
 
   async function submit(e: React.FormEvent) {
     e.preventDefault();
@@ -47,7 +49,12 @@ export default function PolicyPage() {
         setError(data.error || `Request failed (${res.status})`);
         return;
       }
-      setDoc(data.doc as PolicyDocument);
+      const next = data.doc as PolicyDocument;
+      setDoc(next);
+      library.save(courseTitle.trim() || "Classroom AI policy", {
+        request: body,
+        doc: next,
+      });
       setTimeout(
         () => resultRef.current?.scrollIntoView({ behavior: "smooth", block: "start" }),
         80
@@ -63,6 +70,33 @@ export default function PolicyPage() {
     <PageFrame title="New classroom AI policy">
       <div className="h-full overflow-y-auto bg-surface">
         <div className="max-w-3xl mx-auto px-6 lg:px-10 py-8 flex flex-col gap-8">
+          {library.entries.length > 0 && !doc && (
+            <RecentList
+              entries={library.entries}
+              onPick={(entry) => {
+                const d = entry.data as {
+                  request: PolicyRequest;
+                  doc: PolicyDocument;
+                };
+                setTemplate(d.request.template);
+                setCourseTitle(d.request.course_title);
+                setSubject(d.request.subject);
+                setGradeLevel(d.request.grade_level);
+                setOutcomes(d.request.key_learning_outcomes);
+                setAssessments(d.request.assessment_types ?? "");
+                setDoc(d.doc);
+                setTimeout(
+                  () =>
+                    resultRef.current?.scrollIntoView({
+                      behavior: "smooth",
+                      block: "start",
+                    }),
+                  80,
+                );
+              }}
+              onRemove={library.remove}
+            />
+          )}
           <form onSubmit={submit} className="flex flex-col gap-6">
             <div className="flex flex-col gap-2">
               <label className="text-sm font-medium text-foreground">Template</label>

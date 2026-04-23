@@ -7,6 +7,7 @@ import { Field, TextArea, TextInput, Select } from "../_components/Field";
 import { PIINotice } from "../_components/PIINotice";
 import { WarningsPanel } from "../_components/WarningsPanel";
 import { StepsRail, type StepItem } from "../_components/StepsRail";
+import { RecentList, useLibrary } from "../_components/Library";
 import { ASSIGNMENT_TEMPLATES } from "@/lib/templates/assignments";
 import { ASSIGNMENT_EXAMPLES } from "@/lib/templates/assignment-examples";
 import type { AssignmentPlan, AssignmentRequest, AssignmentTemplate } from "@/lib/types";
@@ -74,6 +75,8 @@ function AssignmentPageInner() {
   }, [template, subject, gradeLevel, topic, time, considerations]);
 
   const resultRef = useRef<HTMLDivElement>(null);
+  const library = useLibrary("assignment");
+  const [currentEntryId, setCurrentEntryId] = useState<string | null>(null);
 
   async function generate() {
     setIsLoading(true);
@@ -98,7 +101,11 @@ function AssignmentPageInner() {
         setError(data.error || `Request failed (${res.status})`);
         return;
       }
-      setPlan(data.plan as AssignmentPlan);
+      const next = data.plan as AssignmentPlan;
+      setPlan(next);
+      const title = next.title || s.topic || "Untitled assignment";
+      const entryId = library.save(title, { request: body, plan: next });
+      setCurrentEntryId(entryId);
       setTimeout(
         () => resultRef.current?.scrollIntoView({ behavior: "smooth", block: "start" }),
         80
@@ -145,6 +152,34 @@ function AssignmentPageInner() {
     <PageFrame title="New assignment">
       <div className="h-full overflow-y-auto bg-surface">
         <div className="max-w-6xl mx-auto px-6 lg:px-10 py-8 grid lg:grid-cols-[1fr_240px] gap-10"><div className="flex flex-col gap-8 min-w-0">
+          {library.entries.length > 0 && !plan && (
+            <RecentList
+              entries={library.entries}
+              onPick={(entry) => {
+                const d = entry.data as {
+                  request: AssignmentRequest;
+                  plan: AssignmentPlan;
+                };
+                setTemplate(d.request.template);
+                setSubject(d.request.subject);
+                setGradeLevel(d.request.grade_level);
+                setTopic(d.request.topic);
+                setTime(d.request.time_minutes);
+                setConsiderations(d.request.special_considerations ?? "");
+                setPlan(d.plan);
+                setCurrentEntryId(entry.id);
+                setTimeout(
+                  () =>
+                    resultRef.current?.scrollIntoView({
+                      behavior: "smooth",
+                      block: "start",
+                    }),
+                  80,
+                );
+              }}
+              onRemove={library.remove}
+            />
+          )}
           {/* Form */}
           <form
             onSubmit={(e) => {
@@ -272,7 +307,13 @@ function AssignmentPageInner() {
 
           {plan && (
             <div className="border-t border-border pt-8 flex flex-col gap-8">
-              <AssignmentResult plan={plan} />
+              <AssignmentResult
+                plan={plan}
+                onShareCreated={(shareId) => {
+                  if (currentEntryId)
+                    library.updateShareId(currentEntryId, shareId);
+                }}
+              />
             </div>
           )}
           </div>
@@ -302,11 +343,17 @@ function StagedLoading() {
   );
 }
 
-function AssignmentResult({ plan }: { plan: AssignmentPlan }) {
+function AssignmentResult({
+  plan,
+  onShareCreated,
+}: {
+  plan: AssignmentPlan;
+  onShareCreated?: (shareId: string) => void;
+}) {
   const hasWarnings = (plan.framework_warnings?.length ?? 0) > 0;
   return (
     <>
-      <ShareCard plan={plan} />
+      <ShareCard plan={plan} onShareCreated={onShareCreated} />
 
       <section>
         <h2 className="text-xl font-semibold tracking-tight text-foreground">
@@ -389,8 +436,15 @@ function AssignmentResult({ plan }: { plan: AssignmentPlan }) {
   );
 }
 
-function ShareCard({ plan }: { plan: AssignmentPlan }) {
+function ShareCard({
+  plan,
+  onShareCreated,
+}: {
+  plan: AssignmentPlan;
+  onShareCreated?: (shareId: string) => void;
+}) {
   const [url, setUrl] = useState<string | null>(null);
+  const [shareId, setShareId] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
   const [err, setErr] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
@@ -409,7 +463,9 @@ function ShareCard({ plan }: { plan: AssignmentPlan }) {
         setErr(data.error || `HTTP ${res.status}`);
         return;
       }
+      setShareId(data.id);
       setUrl(`${window.location.origin}/student/${data.id}`);
+      onShareCreated?.(data.id);
     } catch (e) {
       setErr(e instanceof Error ? e.message : "Share failed");
     } finally {
@@ -478,7 +534,7 @@ function ShareCard({ plan }: { plan: AssignmentPlan }) {
           {copied ? "✓ Copied" : "Copy"}
         </button>
       </div>
-      <div className="mt-3 text-xs">
+      <div className="mt-3 text-xs flex flex-wrap items-center gap-x-3 gap-y-1">
         <a
           href={url}
           target="_blank"
@@ -487,7 +543,19 @@ function ShareCard({ plan }: { plan: AssignmentPlan }) {
         >
           Preview as a student ↗
         </a>
-        <span className="text-muted ml-2">See what your class will see.</span>
+        {shareId && (
+          <a
+            href={`/submissions/${shareId}`}
+            target="_blank"
+            rel="noreferrer"
+            className="text-foreground font-medium hover:underline"
+          >
+            View submissions ↗
+          </a>
+        )}
+        <span className="text-muted">
+          See what your class will see, or the work they&rsquo;ve sent back.
+        </span>
       </div>
     </section>
   );

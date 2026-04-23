@@ -2,6 +2,16 @@
 
 import { useEffect, useState } from "react";
 
+export type ProfileId =
+  | "adhd"
+  | "autism"
+  | "dyslexia"
+  | "ell_intermediate"
+  | "executive_function"
+  | "sensory_sensitivity"
+  | "reading_level_low"
+  | "reading_level_high";
+
 export interface AccessibilityPrefs {
   text_size: "default" | "large" | "xlarge";
   dyslexia_friendly: boolean;
@@ -11,7 +21,32 @@ export interface AccessibilityPrefs {
   focus_mode: boolean;
   chunked_text: boolean;
   show_timer: boolean;
+  // Which named profile the student last picked. Drives how the AI tutor talks
+  // to them (tone, sentence length, language complexity). Null = no special
+  // adaptation.
+  profile: ProfileId | null;
 }
+
+// Additional instructions appended to the tutor's system prompt based on the
+// student's chosen profile. These shape WHAT the tutor says, not just UI.
+export const TUTOR_ADAPTATIONS: Record<ProfileId, string> = {
+  adhd:
+    "STUDENT CONTEXT: The student has ADHD. Keep every response under 80 words. Use at most one question per turn. Put the most important point first. Use bullet points when listing anything. Avoid run-on sentences.",
+  autism:
+    "STUDENT CONTEXT: The student is autistic. Be explicit and literal. State exactly what you are asking them to do. Avoid sarcasm, rhetorical questions, and figurative language (or define any figurative term you use). Do not assume they will infer implied meanings. When you ask a question, state clearly what kind of answer you expect.",
+  dyslexia:
+    "STUDENT CONTEXT: The student has dyslexia. Write short sentences (aim for under 15 words each). Use simple, concrete vocabulary. Avoid long paragraphs — break ideas into separate short lines. Do not use unusual spelling or jargon without defining it.",
+  ell_intermediate:
+    "STUDENT CONTEXT: The student is an English Language Learner at an intermediate level. Write at approximately a grade-6 English reading level. Keep sentences short and use active voice. Define any academic term the first time you use it (briefly, in parentheses). Avoid idioms unless you explain them.",
+  executive_function:
+    "STUDENT CONTEXT: The student benefits from executive-function support. End every response with one clear, concrete next step — not an open-ended 'think about this.' Structure the response as (1) reaction to what they wrote, (2) the specific next action. Avoid offering multiple options at once.",
+  sensory_sensitivity:
+    "STUDENT CONTEXT: The student has sensory sensitivity. Keep language calm and matter-of-fact. Avoid exclamation marks, ALL CAPS, emphatic language, or cheerleading. Short, steady sentences. No surprises in tone.",
+  reading_level_low:
+    "STUDENT CONTEXT: The student benefits from a lower reading level. Use short sentences and everyday vocabulary. Define any academic term the first time it appears. Avoid complex sentence structures.",
+  reading_level_high:
+    "STUDENT CONTEXT: The student is an advanced reader. You can use precise, academic vocabulary and richer syntax where it helps the argument. Do not dumb anything down.",
+};
 
 const DEFAULTS: AccessibilityPrefs = {
   text_size: "default",
@@ -22,6 +57,7 @@ const DEFAULTS: AccessibilityPrefs = {
   focus_mode: false,
   chunked_text: false,
   show_timer: false,
+  profile: null,
 };
 
 // Same profile set teachers pick from in the Differentiation Studio,
@@ -248,19 +284,30 @@ export function AccessibilityMenu({
               Pick one that fits you. You can fine-tune after.
             </p>
             <div className="flex flex-wrap gap-1.5">
-              {PROFILE_PRESETS.map((p) => (
-                <button
-                  key={p.id}
-                  type="button"
-                  onClick={() =>
-                    setPrefs({ ...DEFAULTS, ...p.apply })
-                  }
-                  title={p.blurb}
-                  className="text-xs rounded-full px-3 py-1.5 border border-border bg-surface text-foreground hover:border-foreground hover:bg-subtle transition-colors"
-                >
-                  {p.label}
-                </button>
-              ))}
+              {PROFILE_PRESETS.map((p) => {
+                const active = prefs.profile === p.id;
+                return (
+                  <button
+                    key={p.id}
+                    type="button"
+                    onClick={() =>
+                      setPrefs({
+                        ...DEFAULTS,
+                        ...p.apply,
+                        profile: p.id as ProfileId,
+                      })
+                    }
+                    title={p.blurb}
+                    className={`text-xs rounded-full px-3 py-1.5 border transition-colors ${
+                      active
+                        ? "bg-foreground text-surface border-foreground"
+                        : "border-border bg-surface text-foreground hover:border-foreground hover:bg-subtle"
+                    }`}
+                  >
+                    {p.label}
+                  </button>
+                );
+              })}
             </div>
 
             <SectionLabel>Custom</SectionLabel>

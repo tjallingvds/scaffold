@@ -4,6 +4,7 @@ import { useRef, useState } from "react";
 import Link from "next/link";
 import { Button, PageFrame } from "../_components/PageFrame";
 import { Field, TextArea, TextInput } from "../_components/Field";
+import { RecentList, useLibrary } from "../_components/Library";
 import { WarningsPanel } from "../_components/WarningsPanel";
 import { ASSIGNMENT_TEMPLATES } from "@/lib/templates/assignments";
 import type { SemesterPlan, SemesterRequest } from "@/lib/types";
@@ -27,6 +28,7 @@ export default function SemesterPage() {
   const [error, setError] = useState<string | null>(null);
 
   const resultRef = useRef<HTMLDivElement>(null);
+  const library = useLibrary("semester");
 
   async function submit(e: React.FormEvent) {
     e.preventDefault();
@@ -50,7 +52,12 @@ export default function SemesterPage() {
         setError(data.error || `Request failed (${res.status})`);
         return;
       }
-      setPlan(data.plan as SemesterPlan);
+      const next = data.plan as SemesterPlan;
+      setPlan(next);
+      library.save(courseTitle.trim() || "Semester plan", {
+        request: body,
+        plan: next,
+      });
       setTimeout(
         () => resultRef.current?.scrollIntoView({ behavior: "smooth", block: "start" }),
         80
@@ -66,6 +73,32 @@ export default function SemesterPage() {
     <PageFrame title="Plan a semester">
       <div className="h-full overflow-y-auto bg-surface">
         <div className="max-w-3xl mx-auto px-6 lg:px-10 py-8 flex flex-col gap-8">
+          {library.entries.length > 0 && !plan && (
+            <RecentList
+              entries={library.entries}
+              onPick={(entry) => {
+                const d = entry.data as {
+                  request: SemesterRequest;
+                  plan: SemesterPlan;
+                };
+                setCourseTitle(d.request.course_title);
+                setSubject(d.request.subject);
+                setGradeLevel(d.request.grade_level);
+                setWeeks(d.request.total_weeks);
+                setOutline(d.request.units_outline);
+                setPlan(d.plan);
+                setTimeout(
+                  () =>
+                    resultRef.current?.scrollIntoView({
+                      behavior: "smooth",
+                      block: "start",
+                    }),
+                  80,
+                );
+              }}
+              onRemove={library.remove}
+            />
+          )}
           <form onSubmit={submit} className="flex flex-col gap-6">
             <Field label="Course title">
               <TextInput
