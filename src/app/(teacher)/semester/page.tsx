@@ -5,6 +5,9 @@ import Link from "next/link";
 import { Button, PageFrame } from "../_components/PageFrame";
 import { Field, TextArea, TextInput } from "../_components/Field";
 import { RecentList, useLibrary } from "../_components/Library";
+import { RevisePrompt } from "../_components/RevisePrompt";
+import { ExampleChips } from "../_components/ExampleChips";
+import { SEMESTER_EXAMPLES } from "@/lib/templates/builder-examples";
 import { WarningsPanel } from "../_components/WarningsPanel";
 import { ASSIGNMENT_TEMPLATES } from "@/lib/templates/assignments";
 import type { SemesterPlan, SemesterRequest } from "@/lib/types";
@@ -100,6 +103,17 @@ export default function SemesterPage() {
             />
           )}
           <form onSubmit={submit} className="flex flex-col gap-6">
+            <ExampleChips
+              examples={SEMESTER_EXAMPLES}
+              onPick={(ex) => {
+                setCourseTitle(ex.course_title);
+                setSubject(ex.subject);
+                setGradeLevel(ex.grade_level);
+                setWeeks(ex.total_weeks);
+                setOutline(ex.units_outline);
+                setPlan(null);
+              }}
+            />
             <Field label="Course title">
               <TextInput
                 required
@@ -159,6 +173,16 @@ export default function SemesterPage() {
 
           {plan && (
             <div className="border-t border-border pt-8 flex flex-col gap-6">
+              <RevisePrompt
+                kind="semester"
+                current={plan as unknown as Record<string, unknown>}
+                onRevised={(next) => setPlan(next as unknown as SemesterPlan)}
+                quickActions={[
+                  "Use more variety across templates",
+                  "Add a Break-the-AI assignment somewhere",
+                  "Split the longest unit into two",
+                ]}
+              />
               <header>
                 <h2 className="text-xl font-semibold tracking-tight text-foreground">
                   {plan.course_title}

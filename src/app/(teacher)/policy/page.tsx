@@ -4,6 +4,9 @@ import { useRef, useState } from "react";
 import { Button, PageFrame } from "../_components/PageFrame";
 import { Field, TextArea, TextInput } from "../_components/Field";
 import { RecentList, useLibrary } from "../_components/Library";
+import { RevisePrompt } from "../_components/RevisePrompt";
+import { ExampleChips } from "../_components/ExampleChips";
+import { POLICY_EXAMPLES } from "@/lib/templates/builder-examples";
 import { POLICY_TEMPLATES } from "@/lib/templates/policies";
 import type { PolicyDocument, PolicyRequest, PolicyTemplateId } from "@/lib/types";
 
@@ -98,6 +101,18 @@ export default function PolicyPage() {
             />
           )}
           <form onSubmit={submit} className="flex flex-col gap-6">
+            <ExampleChips
+              examples={POLICY_EXAMPLES}
+              onPick={(ex) => {
+                setTemplate(ex.template);
+                setCourseTitle(ex.course_title);
+                setSubject(ex.subject);
+                setGradeLevel(ex.grade_level);
+                setOutcomes(ex.key_learning_outcomes);
+                setAssessments(ex.assessment_types ?? "");
+                setDoc(null);
+              }}
+            />
             <div className="flex flex-col gap-2">
               <label className="text-sm font-medium text-foreground">Template</label>
               <div className="flex flex-wrap gap-1.5">
@@ -184,6 +199,18 @@ export default function PolicyPage() {
 
           {doc && (
             <div className="border-t border-border pt-8 flex flex-col gap-8">
+              <RevisePrompt
+                kind="policy"
+                current={doc as unknown as Record<string, unknown>}
+                onRevised={(next) =>
+                  setDoc(next as unknown as PolicyDocument)
+                }
+                quickActions={[
+                  "Make the syllabus statement shorter",
+                  "Make the tone warmer",
+                  "Add an FAQ about late submissions",
+                ]}
+              />
               <section className="flex flex-col gap-3">
                 <div className="flex items-center justify-between">
                   <h3 className="text-sm font-semibold text-foreground">

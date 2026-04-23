@@ -8,6 +8,7 @@ import { PIINotice } from "../_components/PIINotice";
 import { WarningsPanel } from "../_components/WarningsPanel";
 import { StepsRail, type StepItem } from "../_components/StepsRail";
 import { RecentList, useLibrary } from "../_components/Library";
+import { RevisePrompt } from "../_components/RevisePrompt";
 import { ASSIGNMENT_TEMPLATES } from "@/lib/templates/assignments";
 import { ASSIGNMENT_EXAMPLES } from "@/lib/templates/assignment-examples";
 import type { AssignmentPlan, AssignmentRequest, AssignmentTemplate } from "@/lib/types";
@@ -313,6 +314,7 @@ function AssignmentPageInner() {
                   if (currentEntryId)
                     library.updateShareId(currentEntryId, shareId);
                 }}
+                onRevised={(next) => setPlan(next)}
               />
             </div>
           )}
@@ -346,14 +348,28 @@ function StagedLoading() {
 function AssignmentResult({
   plan,
   onShareCreated,
+  onRevised,
 }: {
   plan: AssignmentPlan;
   onShareCreated?: (shareId: string) => void;
+  onRevised: (next: AssignmentPlan) => void;
 }) {
   const hasWarnings = (plan.framework_warnings?.length ?? 0) > 0;
   return (
     <>
       <ShareCard plan={plan} onShareCreated={onShareCreated} />
+
+      <RevisePrompt
+        kind="assignment"
+        current={plan as unknown as Record<string, unknown>}
+        onRevised={(next) => onRevised(next as unknown as AssignmentPlan)}
+        quickActions={[
+          "Make Phase 2 shorter",
+          "Add an ADHD-friendly adaptation",
+          "Rewrite the tutor prompt to be more firm",
+          "Add a second textual anchor to Phase 1",
+        ]}
+      />
 
       <section>
         <h2 className="text-xl font-semibold tracking-tight text-foreground">

@@ -8,6 +8,9 @@ import { LessonView } from "../_components/LessonView";
 import { WarningsPanel } from "../_components/WarningsPanel";
 import { StepsRail, type StepItem } from "../_components/StepsRail";
 import { RecentList, useLibrary } from "../_components/Library";
+import { RevisePrompt } from "../_components/RevisePrompt";
+import { ExampleChips } from "../_components/ExampleChips";
+import { LESSON_EXAMPLES } from "@/lib/templates/builder-examples";
 import type { AssignmentPlan, LessonPlan, LessonRequest } from "@/lib/types";
 
 interface LessonLibraryPayload {
@@ -130,6 +133,19 @@ export default function LessonPage() {
             />
           )}
           <form onSubmit={generate} className="flex flex-col gap-6">
+            <ExampleChips
+              examples={LESSON_EXAMPLES}
+              onPick={(ex) => {
+                setConcept(ex.concept);
+                setSubject(ex.subject);
+                setGradeLevel(ex.grade_level);
+                setObjective(ex.learning_objective);
+                setTime(ex.time_minutes);
+                setScope(ex.scope);
+                setConsiderations(ex.special_considerations ?? "");
+                setPlan(null);
+              }}
+            />
             <Field label="Concept">
               <TextInput
                 required
@@ -227,6 +243,17 @@ export default function LessonPage() {
                 concept={concept}
                 gradeLevel={gradeLevel}
                 timeMinutes={time}
+              />
+              <RevisePrompt
+                kind="lesson"
+                current={plan as unknown as Record<string, unknown>}
+                onRevised={(next) => setPlan(next as unknown as LessonPlan)}
+                quickActions={[
+                  "Make Phase 2 shorter",
+                  "Add an ADHD-friendly adaptation",
+                  "Replace the example activity with a hands-on one",
+                  "Add a lower-reading-level variant for one activity",
+                ]}
               />
               <LessonView plan={plan} isLoading={false} />
               {(plan.framework_warnings?.length ?? 0) > 0 && (

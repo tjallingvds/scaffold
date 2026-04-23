@@ -5,6 +5,9 @@ import { Button, PageFrame } from "../_components/PageFrame";
 import { Field, TextArea, TextInput } from "../_components/Field";
 import { PIINotice } from "../_components/PIINotice";
 import { RecentList, useLibrary } from "../_components/Library";
+import { RevisePrompt } from "../_components/RevisePrompt";
+import { ExampleChips } from "../_components/ExampleChips";
+import { DIFFERENTIATION_EXAMPLES } from "@/lib/templates/builder-examples";
 import type { DifferentiationRequest, DifferentiationResult, LearnerProfile } from "@/lib/types";
 
 const PROFILES: { id: LearnerProfile; label: string; blurb: string }[] = [
@@ -107,6 +110,15 @@ export default function DifferentiatePage() {
             />
           )}
           <form onSubmit={submit} className="flex flex-col gap-6">
+            <ExampleChips
+              examples={DIFFERENTIATION_EXAMPLES}
+              onPick={(ex) => {
+                setSource(ex.source_text);
+                setSelected(ex.profiles);
+                setCulturalCtx(ex.cultural_context ?? "");
+                setResult(null);
+              }}
+            />
             <Field
               label="Source material"
               hint="Paste the text you want differentiated."
@@ -182,6 +194,18 @@ export default function DifferentiatePage() {
 
           {result && (
             <div className="border-t border-border pt-8 flex flex-col gap-5">
+              <RevisePrompt
+                kind="differentiation"
+                current={result as unknown as Record<string, unknown>}
+                onRevised={(next) =>
+                  setResult(next as unknown as DifferentiationResult)
+                }
+                quickActions={[
+                  "Make every variant shorter",
+                  "Add more visual chunking to the ADHD version",
+                  "Use simpler vocabulary across all variants",
+                ]}
+              />
               <p className="text-xs italic text-muted">{result.source_preserved_check}</p>
               <div className="grid gap-4 md:grid-cols-2">
                 {result.variants.map((v, i) => (
